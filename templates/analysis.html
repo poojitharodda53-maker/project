@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Question Analysis</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <div class="container">
+        <h1>Question Paper Analysis</h1>
+
+        <p>Analyze previous year UGC NET Computer Science Paper 2 questions.</p>
+
+        <form action="{{ url_for('analysis') }}" method="POST">
+
+            <label>Select Subject</label>
+            <select name="subject" required>
+                <option value="">Select Subject</option>
+                <option value="Computer Science">Computer Science</option>
+            </select>
+
+            <br><br>
+
+            <label>Select Unit</label>
+            <select name="unit">
+                <option value="">All Units</option>
+                {% for unit in units %}
+                <option value="{{ unit }}">{{ unit }}</option>
+                {% endfor %}
+            </select>
+
+            <br><br>
+
+            <button type="submit">Analyze Questions</button>
+
+        </form>
+
+        <br>
+        <a href="{{ url_for('dashboard') }}">Back to Dashboard</a>
+    </div>
+
+</body>
+</html>

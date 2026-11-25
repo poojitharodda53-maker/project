@@ -1,0 +1,91 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+
+    <h1>{{ unit.name }}</h1>
+
+    <p><strong>Unit Number:</strong> {{ unit_no }}</p>
+
+    <p><strong>Total Questions:</strong> {{ total }}</p>
+
+    <hr>
+
+    <h2>Unit-wise Questions</h2>
+
+    {% if questions %}
+
+        {% for q in questions %}
+
+            <div class="card">
+
+                <h3>Question {{ loop.index }}</h3>
+
+                <p>
+                    <strong>Original Q.No:</strong>
+                    {{ q.original_no or "Not Available" }}
+                </p>
+
+                <p>
+                    {{ q.question or "Question text not available" }}
+                </p>
+
+                <p>
+                    <strong>Year:</strong>
+                    {{ q.exam_year or "Not Available" }}
+                    |
+                    <strong>Session:</strong>
+                    {{ q.exam_session or "Not Available" }}
+                </p>
+
+                {% if q.option_a %}
+                    <p>A) {{ q.option_a }}</p>
+                {% endif %}
+
+                {% if q.option_b %}
+                    <p>B) {{ q.option_b }}</p>
+                {% endif %}
+
+                {% if q.option_c %}
+                    <p>C) {{ q.option_c }}</p>
+                {% endif %}
+
+                {% if q.option_d %}
+                    <p>D) {{ q.option_d }}</p>
+                {% endif %}
+
+                {% if q.correct_answer %}
+                    <p style="color: green; font-weight: bold;">
+                        Correct Answer: {{ q.correct_answer }}
+                    </p>
+                {% else %}
+                    <p style="color: gray;">
+                        Correct Answer: Not Available
+                    </p>
+                {% endif %}
+
+                <p>
+                    <strong>Unit:</strong> {{ unit.name }}
+                </p>
+
+            </div>
+
+            <br>
+
+        {% endfor %}
+
+    {% else %}
+
+        <p>No questions found in this unit.</p>
+
+    {% endif %}
+
+    <hr>
+
+    <a href="{{ url_for('home') }}">Back to Home</a>
+
+</div>
+
+{% endblock %}

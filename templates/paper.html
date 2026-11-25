@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+
+    <h1>Question Paper Details</h1>
+
+    <h3>Exam Year: {{ paper.exam_year or "Not Available" }}</h3>
+    <h3>Exam Session: {{ paper.exam_session or "Not Available" }}</h3>
+
+    <hr>
+
+    <h2>Extracted Questions</h2>
+
+    {% if questions %}
+
+        {% for q in questions %}
+
+            <div class="card">
+
+                <h4>Question {{ loop.index }} 
+                    (Original Q.No: {{ q.original_no }})
+                </h4>
+
+                <p>{{ q.question }}</p>
+
+                <h5>Options:</h5>
+
+                {% if q.option_a or q.option_b or q.option_c or q.option_d %}
+
+                    <p><strong>A.</strong> {{ q.option_a }}</p>
+                    <p><strong>B.</strong> {{ q.option_b }}</p>
+                    <p><strong>C.</strong> {{ q.option_c }}</p>
+                    <p><strong>D.</strong> {{ q.option_d }}</p>
+
+                {% else %}
+
+                    <p>Options not extracted for this question.</p>
+
+                {% endif %}
+
+                <hr>
+
+                <p>
+                    <strong>Unit:</strong>
+                    {{ q.unit_no }} - {{ q.unit_name }}
+                </p>
+
+                <p>
+                    <strong>Confidence:</strong>
+                    {{ q.confidence }}%
+                </p>
+
+                <form method="POST"
+                      action="{{ url_for('reassign', question_id=q.id) }}">
+
+                    <label><strong>Change Unit:</strong></label>
+
+                    <select name="unit_no">
+                        {% for unit in units %}
+                            <option value="{{ unit.number }}"
+                                {% if unit.number == q.unit_no %}selected{% endif %}>
+                                Unit {{ unit.number }} - {{ unit.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+
+                    <button type="submit">Update Unit</button>
+
+                </form>
+
+            </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <p>No questions found in this paper.</p>
+
+    {% endif %}
+
+    <br>
+
+    <a href="{{ url_for('home') }}">Back to Home</a>
+
+</div>
+{% endblock %}

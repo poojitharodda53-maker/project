@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analysis Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <div class="container">
+
+        <h1>Analysis Results</h1>
+
+        <h3>Subject: {{ subject }}</h3>
+
+        <h3>Frequently Asked Questions</h3>
+
+        {% if results %}
+            {% for question in results %}
+                <div class="question-card">
+                    <h4>{{ loop.index }}. {{ question.question }}</h4>
+                    <p>Frequency: {{ question.frequency }}</p>
+                    <p>Unit: {{ question.unit }}</p>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No analysis results found.</p>
+        {% endif %}
+
+        <br>
+
+        <a href="{{ url_for('analysis') }}">Analyze Again</a>
+
+        <br><br>
+
+        <a href="{{ url_for('dashboard') }}">Back to Dashboard</a>
+
+    </div>
+
+</body>
+</html>

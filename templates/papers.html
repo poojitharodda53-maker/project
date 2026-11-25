@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+
+    <h1>Uploaded Question Papers</h1>
+
+    <hr>
+
+    {% if papers %}
+
+        {% for paper in papers %}
+
+            <div class="card">
+
+                <h3>
+                    {{ paper.exam_year }}
+                    - {{ paper.exam_session }}
+                </h3>
+
+                <p>
+                    <strong>File:</strong>
+                    {{ paper.filename }}
+                </p>
+
+                <p>
+                    <strong>Total Questions:</strong>
+                    {{ paper.total }}
+                </p>
+
+                <a href="{{ url_for('paper_detail', paper_id=paper.id) }}">
+                    View Questions
+                </a>
+
+                <form method="POST"
+                      action="{{ url_for('delete_paper', paper_id=paper.id) }}"
+                      onsubmit="return confirm('Are you sure you want to delete this paper?');">
+
+                    <button type="submit">
+                        Delete Paper
+                    </button>
+
+                </form>
+
+            </div>
+
+            <br>
+
+        {% endfor %}
+
+    {% else %}
+
+        <p>No question papers uploaded yet.</p>
+
+    {% endif %}
+
+    <a href="{{ url_for('home') }}">Back to Home</a>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - UGC NET Analyzer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="container">
+
+    <h1>UGC NET Question Paper Analyzer</h1>
+
+    <h2>Welcome, {{ session.get('username', 'User') }}!</h2>
+
+    <p>Computer Science and Applications - Paper 2</p>
+
+    {% if session.get('role') == 'admin' %}
+
+        <h2>Admin Dashboard</h2>
+
+        <div class="subject-card">
+            <h3>Question Paper Management</h3>
+            <a href="{{ url_for('upload') }}">Upload Papers</a>
+        </div>
+
+        <div class="subject-card">
+            <h3>Question Analysis</h3>
+            <a href="{{ url_for('analysis') }}">Analyze Questions</a>
+        </div>
+
+        <div class="subject-card">
+            <h3>Subjects</h3>
+            <a href="{{ url_for('subjects') }}">Manage Subjects</a>
+        </div>
+
+        <div class="subject-card">
+            <h3>Student Dashboard</h3>
+            <a href="{{ url_for('student') }}">View Student Page</a>
+        </div>
+
+    {% else %}
+
+        <h2>Student Dashboard</h2>
+
+        <div class="subject-card">
+            <h3>Subjects</h3>
+            <a href="{{ url_for('subjects') }}">View Subjects</a>
+        </div>
+
+        <div class="subject-card">
+            <h3>Syllabus Units</h3>
+            <a href="{{ url_for('units') }}">View Units</a>
+        </div>
+
+        <div class="subject-card">
+            <h3>Question Analysis</h3>
+            <a href="{{ url_for('analysis') }}">Analyze Questions</a>
+        </div>
+
+        <div class="subject-card">
+            <h3>Important Questions</h3>
+            <a href="{{ url_for('analysis') }}">View Important Questions</a>
+        </div>
+
+    {% endif %}
+
+    <br>
+    <a href="{{ url_for('logout') }}">Logout</a>
+
+</div>
+
+</body>
+</html>

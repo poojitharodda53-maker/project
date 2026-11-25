@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - UGC NET Analyzer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="container">
+    <h1>UGC NET Question Paper Analyzer</h1>
+    <h2>Login</h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    {% endwith %}
+
+    <form action="{{ url_for('login') }}" method="POST">
+
+        <label>Username</label>
+        <input type="text" name="username"
+               placeholder="Enter username" required>
+
+        <label>Password</label>
+        <input type="password" name="password"
+               placeholder="Enter password" required>
+
+        <label>Select Role</label>
+        <select name="role" required>
+            <option value="">Select Role</option>
+            <option value="admin">Admin</option>
+            <option value="student">Student</option>
+        </select>
+
+        <button type="submit">Login</button>
+
+    </form>
+   <p>Don't have an account?</p>
+
+    <a href="{{ url_for('register') }}">
+        Create Student Account
+    </a>
+    <p>UGC NET Computer Science - Paper 2</p>
+</div>
+
+</body>
+</html>

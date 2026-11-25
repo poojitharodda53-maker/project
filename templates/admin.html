@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <div class="container">
+
+        <h1>Admin Dashboard</h1>
+        <p>Welcome, Administrator!</p>
+
+        <div class="subject-card">
+            <h3>User Management</h3>
+            <p>Manage registered users.</p>
+        </div>
+
+        <div class="subject-card">
+            <h3>Question Paper Management</h3>
+            <p>Upload and manage previous year question papers.</p>
+            <a href="{{ url_for('upload') }}">Upload Papers</a>
+        </div>
+
+        <div class="subject-card">
+            <h3>Question Analysis</h3>
+            <p>Analyze frequently asked questions.</p>
+            <a href="{{ url_for('analysis') }}">Analyze Questions</a>
+        </div>
+
+        <div class="subject-card">
+            <h3>View Subjects</h3>
+            <a href="{{ url_for('subjects') }}">Manage Subjects</a>
+        </div>
+
+        <br>
+
+        <a href="{{ url_for('dashboard') }}">Back to Dashboard</a>
+
+    </div>
+
+</body>
+</html>

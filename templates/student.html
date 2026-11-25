@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <div class="container">
+
+        <h1>Student Dashboard</h1>
+
+        <h2>Welcome, {{ session.get('username', 'Student') }}!</h2>
+
+        <p>UGC NET Computer Science and Applications - Paper 2</p>
+
+        <div class="subject-card">
+            <h3>📚 Subjects</h3>
+            <p>View available subjects.</p>
+            <a href="{{ url_for('subjects') }}">View Subjects</a>
+        </div>
+
+        <div class="subject-card">
+            <h3>📖 Syllabus Units</h3>
+            <p>Explore all 10 syllabus units.</p>
+            <a href="{{ url_for('units') }}">View Units</a>
+        </div>
+
+        <div class="subject-card">
+            <h3>📄 Previous Year Papers</h3>
+            <p>Access uploaded question papers.</p>
+            <a href="{{ url_for('upload') }}">View Papers</a>
+        </div>
+
+        <div class="subject-card">
+            <h3>📊 Question Analysis</h3>
+            <p>Find frequently asked questions and important topics.</p>
+            <a href="{{ url_for('analysis') }}">Analyze Questions</a>
+        </div>
+
+        <div class="subject-card">
+            <h3>⭐ Important Questions</h3>
+            <p>Practice frequently repeated questions.</p>
+            <a href="{{ url_for('analysis') }}">View Important Questions</a>
+        </div>
+
+        <br>
+
+        <a href="{{ url_for('logout') }}">Logout</a>
+
+    </div>
+
+</body>
+</html>

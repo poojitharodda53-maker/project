@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UGC NET Subjects</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <div class="container">
+
+        <h1>UGC NET Computer Science</h1>
+        <h2>Select Your Subject</h2>
+
+        <div class="subject-card">
+            <h3>Computer Science and Applications</h3>
+            <p>UGC NET Paper 2</p>
+            <a href="{{ url_for('units') }}">View Units</a>
+        </div>
+
+        <br>
+
+        <a href="{{ url_for('dashboard') }}">Back to Dashboard</a>
+
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>UGC NET Computer Science</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<nav>
+
+    <a href="/" class="logo">
+        UGC NET <span>CS Paper 2</span>
+    </a>
+
+    <div class="nav-links">
+
+        <a href="/">Home</a>
+
+        <a href="/upload">Upload PDF</a>
+
+        <a href="/papers">Papers</a>
+
+        <a href="/analysis">Analysis</a>
+
+    </div>
+
+</nav>
+
+<main>
+
+    {% with messages = get_flashed_messages() %}
+
+        {% if messages %}
+
+            {% for message in messages %}
+
+                <div class="alert">
+                    {{ message }}
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
+
+    {% endwith %}
+
+    {% block content %}
+
+    {% endblock %}
+
+</main>
+
+<footer>
+
+    UGC NET Computer Science and Applications
+
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="hero">
+
+    <p>WELCOME TO UGC NET</p>
+
+    <h1>Computer Science</h1>
+
+    <h2>Question Paper Analysis</h2>
+
+    <p>Previous Year Questions | Unit Wise Analysis</p>
+
+    <a href="/upload" class="btn">
+        Upload Question Paper
+    </a>
+
+</section>
+
+<div class="stats">
+
+    <div>
+        <h2>{{ total }}</h2>
+        <p>Total Questions</p>
+    </div>
+
+    <div>
+        <h2>{{ papers }}</h2>
+        <p>Uploaded Papers</p>
+    </div>
+
+    <div>
+        <h2>10</h2>
+        <p>Syllabus Units</p>
+    </div>
+
+</div>
+
+<h2 class="heading">
+    UGC NET Computer Science Syllabus
+</h2>
+
+<div class="unit-grid">
+
+    {% for unit in units %}
+
+    <a href="/unit/{{ loop.index }}" class="unit-card">
+
+        <div class="unit-icon">
+            {{ ["🧩","🖥️","💻","🗄️","⚙️","🧪","🌳","📘","🌐","🤖"][loop.index0] }}
+        </div>
+
+        <h3>Unit {{ loop.index }}</h3>
+
+        <h2>{{ unit.name }}</h2>
+
+        <p>
+            {{ counts.get(loop.index, 0) }} Questions
+        </p>
+
+    </a>
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}

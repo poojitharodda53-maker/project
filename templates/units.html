@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UGC NET Units</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <div class="container">
+
+        <h1>UGC NET Computer Science</h1>
+        <h2>Paper 2 - Syllabus Units</h2>
+
+        {% for unit in units %}
+        <div class="subject-card">
+            <h3>{{ unit }}</h3>
+            <a href="{{ url_for('upload') }}">Upload Question Paper</a>
+        </div>
+        {% endfor %}
+
+        <br>
+
+        <a href="{{ url_for('subjects') }}">Back to Subjects</a>
+
+        <br><br>
+
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+
+    </div>
+
+</body>
+</html>
