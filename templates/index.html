@@ -1,67 +1,111 @@
+
 {% extends "base.html" %}
 
 {% block content %}
 
-<section class="hero">
+<div class="dashboard-container">
 
-    <p>WELCOME TO UGC NET</p>
+    <!-- WELCOME BANNER -->
+    <section class="welcome-banner">
 
-    <h1>Computer Science</h1>
-
-    <h2>Question Paper Analysis</h2>
-
-    <p>Previous Year Questions | Unit Wise Analysis</p>
-
-    <a href="/upload" class="btn">
-        Upload Question Paper
-    </a>
-
-</section>
-
-<div class="stats">
-
-    <div>
-        <h2>{{ total }}</h2>
-        <p>Total Questions</p>
-    </div>
-
-    <div>
-        <h2>{{ papers }}</h2>
-        <p>Uploaded Papers</p>
-    </div>
-
-    <div>
-        <h2>10</h2>
-        <p>Syllabus Units</p>
-    </div>
-
-</div>
-
-<h2 class="heading">
-    UGC NET Computer Science Syllabus
-</h2>
-
-<div class="unit-grid">
-
-    {% for unit in units %}
-
-    <a href="/unit/{{ loop.index }}" class="unit-card">
-
-        <div class="unit-icon">
-            {{ ["🧩","🖥️","💻","🗄️","⚙️","🧪","🌳","📘","🌐","🤖"][loop.index0] }}
+        <div class="hero-illustration">
+            <div style="font-size:75px;">📚 💻</div>
+            <div style="font-size:38px;">📄 🔍</div>
         </div>
 
-        <h3>Unit {{ loop.index }}</h3>
+        <div class="welcome-content">
+            <p class="welcome-label">WELCOME TO</p>
 
-        <h2>{{ unit.name }}</h2>
+            <h1>UGC NET Computer Science</h1>
 
-        <p>
-            {{ counts.get(loop.index, 0) }} Questions
-        </p>
+            <h2>Paper 2 Question Paper Analyzer</h2>
 
-    </a>
+            <p>
+                Upload your previous year question papers and get
+                unit-wise and year-wise analysis of questions.
+            </p>
+        </div>
 
-    {% endfor %}
+    </section>
+
+
+    <!-- DASHBOARD STATISTICS -->
+    <section class="dashboard-stats">
+
+        <div class="stat-card stat-blue">
+            <div class="stat-icon">📄</div>
+            <div>
+                <p>Total PDFs Uploaded</p>
+                <h2>{{ papers }}</h2>
+            </div>
+        </div>
+
+        <div class="stat-card stat-green">
+            <div class="stat-icon">❓</div>
+            <div>
+                <p>Total Questions Extracted</p>
+                <h2>{{ total }}</h2>
+            </div>
+        </div>
+
+        <div class="stat-card stat-purple">
+            <div class="stat-icon">📚</div>
+            <div>
+                <p>Total Units Covered</p>
+                <h2>10</h2>
+            </div>
+        </div>
+
+        <div class="stat-card stat-orange">
+            <div class="stat-icon">🕒</div>
+            <div>
+                <p>Last Updated</p>
+                <h2 style="font-size:18px;">
+                    {{ last_updated or 'Not Available' }}
+                </h2>
+            </div>
+        </div>
+
+    </section>
+
+
+    <!-- SYLLABUS -->
+    <section class="syllabus-section">
+
+        <div class="section-heading">
+            <p class="section-label">OFFICIAL UGC NET SYLLABUS</p>
+            <h2>UGC NET Computer Science Syllabus</h2>
+        </div>
+
+        <div class="unit-grid">
+
+            {% for unit in units %}
+
+            <a href="{{ url_for('unit_detail', unit_no=loop.index) }}"
+               class="unit-card">
+
+                <div class="unit-icon">
+                    {{ ["🧩","🖥️","💻","🗄️","⚙️","🧪","🌳","📘","🌐","🤖"][loop.index0] }}
+                </div>
+
+                <div class="unit-info">
+                    <h3>Unit {{ loop.index }}</h3>
+                    <p>{{ unit.name }}</p>
+                </div>
+
+                <span class="question-count">
+                    {{ counts.get(loop.index, 0) }} Questions
+                </span>
+
+                <span class="unit-arrow">›</span>
+
+            </a>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
 
 </div>
 

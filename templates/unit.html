@@ -3,88 +3,85 @@
 
 {% block content %}
 
-<div class="container">
+<div class="dashboard-container unit-page">
 
-    <h1>{{ unit.name }}</h1>
+    <section class="welcome-banner unit-welcome">
+        <div class="unit-welcome-icon">📚</div>
 
-    <p><strong>Unit Number:</strong> {{ unit_no }}</p>
+        <div class="welcome-content">
+            <p class="welcome-label">UGC NET COMPUTER SCIENCE</p>
+            <h1>Unit {{ unit_no }} - {{ unit.name }}</h1>
+            <p>Explore previous year question papers belonging to this unit.</p>
+        </div>
+    </section>
 
-    <p><strong>Total Questions:</strong> {{ total }}</p>
+    <section class="dashboard-stats">
 
-    <hr>
-
-    <h2>Unit-wise Questions</h2>
-
-    {% if questions %}
-
-        {% for q in questions %}
-
-            <div class="card">
-
-                <h3>Question {{ loop.index }}</h3>
-
-                <p>
-                    <strong>Original Q.No:</strong>
-                    {{ q.original_no or "Not Available" }}
-                </p>
-
-                <p>
-                    {{ q.question or "Question text not available" }}
-                </p>
-
-                <p>
-                    <strong>Year:</strong>
-                    {{ q.exam_year or "Not Available" }}
-                    |
-                    <strong>Session:</strong>
-                    {{ q.exam_session or "Not Available" }}
-                </p>
-
-                {% if q.option_a %}
-                    <p>A) {{ q.option_a }}</p>
-                {% endif %}
-
-                {% if q.option_b %}
-                    <p>B) {{ q.option_b }}</p>
-                {% endif %}
-
-                {% if q.option_c %}
-                    <p>C) {{ q.option_c }}</p>
-                {% endif %}
-
-                {% if q.option_d %}
-                    <p>D) {{ q.option_d }}</p>
-                {% endif %}
-
-                {% if q.correct_answer %}
-                    <p style="color: green; font-weight: bold;">
-                        Correct Answer: {{ q.correct_answer }}
-                    </p>
-                {% else %}
-                    <p style="color: gray;">
-                        Correct Answer: Not Available
-                    </p>
-                {% endif %}
-
-                <p>
-                    <strong>Unit:</strong> {{ unit.name }}
-                </p>
-
+        <div class="stat-card stat-blue">
+            <div class="stat-icon">▤</div>
+            <div>
+                <p>Total Questions</p>
+                <h2>{{ total }}</h2>
             </div>
+        </div>
 
-            <br>
+        <div class="stat-card stat-purple">
+            <div class="stat-icon">▣</div>
+            <div>
+                <p>Available Papers</p>
+                <h2>{{ papers|length }}</h2>
+            </div>
+        </div>
 
-        {% endfor %}
+    </section>
 
-    {% else %}
+    <section class="syllabus-section">
 
-        <p>No questions found in this unit.</p>
+        <div class="section-heading">
+            <div>
+                <p class="section-label">QUESTION PAPER COLLECTION</p>
+                <h2>Available Years</h2>
+                <p>Select a year to view its questions.</p>
+            </div>
+        </div>
 
-    {% endif %}
+        {% if papers %}
 
-    <hr>
+        <div class="unit-grid">
 
-    <a href="{{ url_for('home') }}">Back to Home</a>
+            {% for paper in papers %}
+
+            <a href="{{ url_for('unit_paper_questions', unit_no=unit_no, paper_id=paper.id) }}"
+               class="unit-card paper-unit-card">
+
+                <div class="unit-icon">📅</div>
+
+                <h3>{{ paper.exam_year or 'Year Not Available' }}</h3>
+
+                <h2>{{ unit.name }}</h2>
+
+                <p>{{ paper.total }} Questions</p>
+
+                <span class="paper-view-link">
+                    View Questions →
+                </span>
+
+            </a>
+
+            {% endfor %}
+
+        </div>
+
+        {% else %}
+
+        <div class="no-papers">
+            <h2>No Papers Available</h2>
+            <p>Upload question papers to view them here.</p>
+        </div>
+
+        {% endif %}
+
+    </section>
 
 </div>
 

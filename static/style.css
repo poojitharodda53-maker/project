@@ -1,3 +1,7 @@
+/* ==============================
+   GLOBAL
+============================== */
+
 * {
     margin: 0;
     padding: 0;
@@ -6,68 +10,333 @@
 }
 
 body {
-    background: linear-gradient(135deg, #e0e7ff, #f3e8ff);
+    background: #f4f6fc;
     min-height: 100vh;
-    padding: 30px;
-    color: #252b48;
+    color: #172554;
 }
 
-.container {
-    max-width: 1000px;
-    margin: 30px auto;
-    background: white;
-    padding: 35px;
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+/* ==============================
+   NAVIGATION BAR
+============================== */
+
+.navbar,
+nav {
+    background: linear-gradient(100deg, #111b75, #173da8);
+    color: white;
+    min-height: 68px;
+    padding: 12px 25px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    box-shadow: 0 3px 12px rgba(20, 35, 100, 0.2);
+}
+
+.navbar a,
+nav a {
+    color: white;
+    background: transparent;
+    padding: 10px 12px;
+    margin: 0;
+    border-radius: 7px;
+    font-size: 14px;
+}
+
+.navbar a:hover,
+nav a:hover {
+    background: rgba(255,255,255,0.16);
+}
+
+/* ==============================
+   MAIN CONTAINER
+============================== */
+
+.container,
+.dashboard-container {
+    width: 100%;
+    max-width: 1500px;
+    margin: 20px auto;
+    padding: 15px;
+    background: transparent;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+/* ==============================
+   WELCOME BANNER
+============================== */
+
+.welcome-banner {
+    background: linear-gradient(110deg, #e0e7ff, #ede9fe, #f5eaff);
     border-radius: 15px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    padding: 30px;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    min-height: 155px;
+    border: 1px solid #dbe4ff;
 }
 
-h1 {
-    text-align: center;
-    color: #4338ca;
-    margin-bottom: 20px;
-}
-
-h2 {
-    color: #4f46e5;
-    margin-bottom: 20px;
-}
-
-h3 {
-    color: #3730a3;
+.welcome-banner h1 {
+    text-align: left;
+    color: #172b83;
+    font-size: 27px;
     margin-bottom: 10px;
 }
 
-p {
-    line-height: 1.6;
+.welcome-banner p {
+    color: #26345e;
+    font-size: 15px;
+}
+
+.welcome-label,
+.section-label {
+    color: #5365b8;
+    font-weight: bold;
+    font-size: 12px;
+    letter-spacing: 1px;
+}
+
+/* ==============================
+   DASHBOARD STATISTICS
+============================== */
+
+.dashboard-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin: 18px 0 25px;
+}
+
+.stat-card {
+    background: white;
+    border: 1px solid #e0e7ff;
+    border-radius: 12px;
+    padding: 18px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-height: 100px;
+    box-shadow: 0 3px 12px rgba(30, 50, 100, 0.05);
+}
+
+.stat-card p {
+    font-size: 13px;
+    color: #475569;
+    margin-bottom: 5px;
+}
+
+.stat-card h2 {
+    font-size: 25px;
+    margin: 0;
+    color: #172b83;
+}
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 25px;
+    background: #e0e7ff;
+}
+
+.stat-blue .stat-icon {
+    background: #dbeafe;
+}
+
+.stat-purple .stat-icon {
+    background: #ede9fe;
+}
+
+.stat-green .stat-icon {
+    background: #d1fae5;
+}
+
+.stat-orange .stat-icon {
+    background: #ffedd5;
+}
+
+/* ==============================
+   SECTION HEADINGS
+============================== */
+
+.syllabus-section {
+    margin-top: 20px;
+}
+
+.section-heading {
+    margin-bottom: 18px;
+}
+
+.section-heading h2 {
+    color: #172554;
+    font-size: 21px;
+    margin: 5px 0;
+}
+
+.section-heading p {
+    color: #64748b;
+    font-size: 14px;
+}
+
+/* ==============================
+   UNIT CARDS
+============================== */
+
+.unit-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.unit-card {
+    background: linear-gradient(110deg, #263ac5, #0753b9);
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    min-height: 105px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    border: 2px solid transparent;
+    box-shadow: 0 4px 10px rgba(30, 60, 150, 0.12);
+    transition: 0.2s ease;
+}
+
+.unit-card h2,
+.unit-card h3,
+.unit-card p {
+    color: white;
+    margin-bottom: 5px;
+}
+
+.unit-card h3 {
+    font-size: 17px;
+}
+
+.unit-card p {
+    font-size: 13px;
+}
+
+.unit-card:hover {
+    transform: translateY(-3px);
+    border-color: #a5b4fc;
+    box-shadow: 0 7px 18px rgba(30, 60, 150, 0.2);
+}
+
+.unit-icon {
+    min-width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 25px;
+}
+
+/* ==============================
+   YEAR / PDF CARDS
+============================== */
+
+.paper-unit-card {
+    background: white;
+    color: #172554;
+    border: 1px solid #dbe3f2;
+    min-height: 90px;
+    padding: 18px;
+}
+
+.paper-unit-card h2,
+.paper-unit-card h3,
+.paper-unit-card p {
+    color: #172554;
+}
+
+.paper-unit-card:hover {
+    background: #eff6ff;
+    border-color: #647bea;
+}
+
+.paper-view-link {
+    color: #2447b9;
+    font-size: 13px;
+    font-weight: bold;
+    margin-left: auto;
+}
+
+/* ==============================
+   QUESTIONS
+============================== */
+
+.question-card {
+    background: white;
+    padding: 22px;
+    margin: 15px 0;
+    border-radius: 12px;
+    border: 1px solid #dbe3f2;
+    box-shadow: 0 3px 12px rgba(30, 50, 100, 0.05);
+}
+
+.question-card h3 {
+    color: #173da8;
+    margin-bottom: 14px;
+}
+
+.question-card p {
+    color: #172554;
+    line-height: 1.7;
     margin-bottom: 12px;
 }
 
-.subject-card,
-.question-card {
+.question-card label {
+    display: block;
+    padding: 9px 12px;
+    margin: 7px 0;
     background: #f8faff;
-    padding: 20px;
-    margin: 15px 0;
-    border-radius: 10px;
-    border: 1px solid #dbeafe;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
 }
 
-a,
-button {
-    display: inline-block;
-    background: #4f46e5;
+/* ==============================
+   BUTTONS
+============================== */
+
+button,
+.btn,
+a.button {
+    background: #2947c7;
     color: white;
-    padding: 11px 20px;
+    padding: 11px 19px;
     border: none;
     border-radius: 7px;
-    text-decoration: none;
-    cursor: pointer;
-    margin-top: 10px;
+    display: inline-block;
+    margin-top: 8px;
 }
 
-a:hover,
-button:hover {
-    background: #3730a3;
+button:hover,
+.btn:hover,
+a.button:hover {
+    background: #172b83;
 }
+
+/* ==============================
+   FORMS
+============================== */
 
 input,
 select,
@@ -76,19 +345,110 @@ textarea {
     padding: 12px;
     margin: 10px 0;
     border: 1px solid #cbd5e1;
-    border-radius: 7px;
+    border-radius: 8px;
+    background: white;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: #5268d8;
+    box-shadow: 0 0 0 3px #e0e7ff;
 }
 
 label {
     font-weight: bold;
+    color: #334155;
+}
+
+/* ==============================
+   TABLES
+============================== */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+th {
+    background: #1e369e;
+    color: white;
+    padding: 13px;
+    text-align: left;
+}
+
+td {
+    padding: 12px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+/* ==============================
+   EMPTY MESSAGE
+============================== */
+
+.no-papers {
+    background: white;
+    border: 1px dashed #a5b4fc;
+    border-radius: 12px;
+    padding: 35px;
+    text-align: center;
+    color: #475569;
+}
+
+/* ==============================
+   RESPONSIVE DESIGN
+============================== */
+
+@media (max-width: 900px) {
+    .dashboard-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
 @media (max-width: 600px) {
     body {
-        padding: 10px;
+        padding: 0;
     }
 
-    .container {
+    .container,
+    .dashboard-container {
+        padding: 10px;
+        margin: 10px auto;
+    }
+
+    .welcome-banner {
         padding: 20px;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .welcome-banner h1 {
+        font-size: 21px;
+    }
+
+    .dashboard-stats {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+
+    .stat-card {
+        padding: 12px;
+    }
+
+    .unit-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .unit-card {
+        padding: 15px;
+    }
+
+    .navbar,
+    nav {
+        padding: 12px;
     }
 }

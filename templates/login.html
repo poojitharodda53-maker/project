@@ -1,50 +1,175 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - UGC NET Analyzer</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+        .login-container {
+            max-width: 430px;
+            margin: 60px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.10);
+        }
+
+        .login-container h1,
+        .login-container h2,
+        .login-container p {
+            text-align: center;
+        }
+
+        .role-tabs {
+            display: flex;
+            gap: 10px;
+            margin: 25px 0;
+        }
+
+        .role-tabs button {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #f3f4f6;
+            color: #333;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .role-tabs button.active {
+            background: #3155c8;
+            color: white;
+            border-color: #3155c8;
+        }
+
+        .login-container label {
+            display: block;
+            margin-top: 15px;
+            font-weight: 600;
+        }
+
+        .login-container input {
+            width: 100%;
+            padding: 12px;
+            margin-top: 7px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 7px;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 13px;
+            margin-top: 25px;
+            background: #3155c8;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .login-btn:hover {
+            background: #243fa0;
+        }
+
+        .message {
+            text-align: center;
+            color: #c0392b;
+        }
+
+        .register-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
 </head>
+
 <body>
 
-<div class="container">
-    <h1>UGC NET Question Paper Analyzer</h1>
-    <h2>Login</h2>
+<div class="login-container">
+
+    <h1>UGC NET Computer Science</h1>
+    <h2>Question Paper Analyzer</h2>
+
+    <h2>Welcome Back!</h2>
+    <p>Select your login type</p>
 
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% for category, message in messages %}
-            <p>{{ message }}</p>
+            <p class="message">{{ message }}</p>
         {% endfor %}
     {% endwith %}
 
+    <div class="role-tabs">
+        <button type="button"
+                id="adminTab"
+                onclick="selectRole('admin')">
+            Admin Login
+        </button>
+
+        <button type="button"
+                id="studentTab"
+                class="active"
+                onclick="selectRole('student')">
+            Student Login
+        </button>
+    </div>
+
     <form action="{{ url_for('login') }}" method="POST">
 
+        <input type="hidden"
+               name="role"
+               id="selectedRole"
+               value="student">
+
         <label>Username</label>
-        <input type="text" name="username"
-               placeholder="Enter username" required>
+        <input type="text"
+               name="username"
+               placeholder="Enter username"
+               required>
 
         <label>Password</label>
-        <input type="password" name="password"
-               placeholder="Enter password" required>
+        <input type="password"
+               name="password"
+               placeholder="Enter password"
+               required>
 
-        <label>Select Role</label>
-        <select name="role" required>
-            <option value="">Select Role</option>
-            <option value="admin">Admin</option>
-            <option value="student">Student</option>
-        </select>
-
-        <button type="submit">Login</button>
+        <button type="submit" class="login-btn">
+            Login
+        </button>
 
     </form>
-   <p>Don't have an account?</p>
 
-    <a href="{{ url_for('register') }}">
-        Create Student Account
-    </a>
+    <div class="register-link">
+        <p>New Student?</p>
+        <a href="{{ url_for('register') }}">
+            Create Student Account
+        </a>
+    </div>
+
     <p>UGC NET Computer Science - Paper 2</p>
+
 </div>
+
+<script>
+function selectRole(role) {
+
+    document.getElementById("selectedRole").value = role;
+
+    document.getElementById("adminTab")
+        .classList.toggle("active", role === "admin");
+
+    document.getElementById("studentTab")
+        .classList.toggle("active", role === "student");
+}
+</script>
 
 </body>
 </html>

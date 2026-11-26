@@ -1,3 +1,4 @@
+
 import re
 
 
@@ -117,9 +118,8 @@ UNITS = [
 
 
 # ==========================================
-# 2. QUESTION CLASSIFICATION
+# 2. ADDITIONAL KEYWORDS
 # ==========================================
-# Additional keywords for all 10 UGC NET CS Paper 2 Units
 
 EXTRA_KEYWORDS = {
     1: [
@@ -129,9 +129,10 @@ EXTRA_KEYWORDS = {
         "predicate logic", "truth table", "converse",
         "inverse", "contrapositive", "group", "commutative",
         "fuzzy sets", "fuzzy relations", "defuzzification",
-        "linear programming", "graph theory", "boolean expression"
+        "linear programming", "graph theory", "boolean expression",
+        "propositional expression", "neither intelligent nor happy",
+        "she is intelligent", "she is unhappy"
     ],
-
     2: [
         "cache memory", "cache coherence", "cache mapping",
         "main memory", "memory mapping", "number system",
@@ -141,9 +142,10 @@ EXTRA_KEYWORDS = {
         "arithmetic pipeline", "mantissa", "exponent",
         "dma", "input output", "i/o operation",
         "read status register", "data register",
-        "multiplexer", "decoder", "register organization"
+        "multiplexer", "decoder", "register organization",
+        "instruction processing", "fetch decode execute",
+        "instruction sequencing", "instruction execution steps"
     ],
-
     3: [
         "c programming", "pointer expression", "array element",
         "pointer arithmetic", "pointer operations",
@@ -154,9 +156,9 @@ EXTRA_KEYWORDS = {
         "clipping", "sutherland-cohen", "flood fill",
         "oblique projection", "cavalier projection",
         "cabinet projection", "orthographic projection",
-        "raster scan"
+        "raster scan", "infix expression",
+        "prefix expression", "postfix expression"
     ],
-
     4: [
         "relational algebra", "relational model",
         "functional dependency", "candidate key",
@@ -166,9 +168,9 @@ EXTRA_KEYWORDS = {
         "view serializable", "database recovery",
         "data mining", "data warehouse", "k-means",
         "clustering", "classification", "olap",
-        "sql query", "er diagram"
+        "sql query", "er diagram", "dependencies",
+        "key for r", "relation r", "candidate key"
     ],
-
     5: [
         "operating system", "cpu scheduling", "waiting time",
         "ready queue", "waiting queue", "round robin",
@@ -181,11 +183,10 @@ EXTRA_KEYWORDS = {
         "pthread", "raid level", "disk swapping",
         "swap in", "swap out", "virtualization",
         "hypervisor", "virtual machine", "memory management",
-        "deadlock", "disk scheduling","c-look", "c-scan", "sstf",
-        "fcfs", "scan algorithm",
+        "deadlock", "disk scheduling", "c-look", "c-scan",
+        "sstf", "fcfs", "scan algorithm",
         "scan (left)", "scan (right)"
     ],
-
     6: [
         "software engineering", "software quality",
         "software characteristic", "software testing",
@@ -201,7 +202,6 @@ EXTRA_KEYWORDS = {
         "decision table", "mccall", "portability",
         "maintainability", "reliability"
     ],
-
     7: [
         "data structure", "binary tree", "avl tree",
         "red-black tree", "b tree", "binary search tree",
@@ -215,7 +215,6 @@ EXTRA_KEYWORDS = {
         "hashing", "linear probing", "quadratic probing",
         "double hashing"
     ],
-
     8: [
         "finite automata", "finite automaton", "dfa",
         "nfa", "regular expression", "regular grammar",
@@ -231,7 +230,6 @@ EXTRA_KEYWORDS = {
         "leader statements", "code optimization",
         "dominators"
     ],
-
     9: [
         "computer network", "data communication",
         "count to infinity", "distance vector routing",
@@ -248,7 +246,6 @@ EXTRA_KEYWORDS = {
         "manchester encoding", "hamming code",
         "bipolar ami", "network topology"
     ],
-
     10: [
         "artificial intelligence", "agent system",
         "rational agent", "agent and environment",
@@ -263,32 +260,39 @@ EXTRA_KEYWORDS = {
         "heuristic search", "best first search",
         "minimax", "alpha beta", "expert system",
         "strips", "planning problem",
-        "fuzzy logic", "natural language processing"
+        "fuzzy logic", "natural language processing",
+        "ga termination criteria",
+        "genetic algorithm termination criteria"
     ]
 }
 
 
+# ==========================================
+# 3. QUESTION CLASSIFICATION
+# ==========================================
+
 def classify_question(question):
 
     text = str(question).lower()
+    text = re.sub(r"\s+", " ", text).strip()
 
-    scores = []
-
-    # Avoid very general words that can cause wrong classification
     ignored_keywords = {
         "process", "array", "structure", "database",
-        "register", "searching", "sorting", "compiler"
+        "register", "searching", "sorting", "compiler",
+        "classification"
     }
+
+    scores = []
 
     for index, unit in enumerate(UNITS):
 
         score = 0
 
-        keywords = (
+        keywords = set(
             unit["keywords"] + EXTRA_KEYWORDS[index + 1]
         )
 
-        for keyword in set(keywords):
+        for keyword in keywords:
 
             keyword = keyword.lower().strip()
 
@@ -302,7 +306,6 @@ def classify_question(question):
             )
 
             if re.search(pattern, text):
-                # Additional keywords receive stronger weight
                 if keyword in EXTRA_KEYWORDS[index + 1]:
                     score += 2
                 else:
@@ -315,33 +318,39 @@ def classify_question(question):
     if best_score == 0:
         return None, 0
 
-    unit_number = scores.index(best_score) + 1
+    best_units = [
+        i for i, score in enumerate(scores)
+        if score == best_score
+    ]
 
-    return unit_number, best_score
+    if len(best_units) > 1:
+        return None, best_score
+
+    return best_units[0] + 1, best_score
+
 
 # ==========================================
-# 3. CLEAN PDF TEXT
+# 4. CLEAN PDF TEXT
 # ==========================================
 
 def clean_text(value):
 
-    value = value.replace("\r", " ")
+    value = str(value or "").replace("\r", " ")
     value = re.sub(r"\s+", " ", value)
 
     return value.strip()
 
 
 # ==========================================
-# 4. EXTRACT QUESTIONS AND OPTIONS
+# 5. EXTRACT QUESTIONS AND OPTIONS
 # ==========================================
 
 def extract_questions(text):
 
-    text = text.replace("\r", "\n")
+    text = str(text or "").replace("\r", "\n")
 
-    # Stop before answer key or solutions
     stop_pattern = re.compile(
-        r"(?im)^\s*(?:Answer\s+Key|Hints\s*&\s*Solutions)\s*$"
+        r"(?im)^\s*(?:Answer\s+Key|Hints\s*&\s*Solutions)\b.*$"
     )
 
     stop_match = stop_pattern.search(text)
@@ -349,14 +358,12 @@ def extract_questions(text):
     if stop_match:
         text = text[:stop_match.start()]
 
-    # Remove common footer lines
     text = re.sub(
         r"(?im)^\s*(?:Android App|iOS App|PW Website).*$",
         "",
         text
     )
 
-    # Detect Q1, Q2, Q100 and similar headings
     question_pattern = re.compile(
         r"(?im)^\s*Q\s*(\d{1,3})\s*[.)]?\s*"
     )
@@ -369,34 +376,40 @@ def extract_questions(text):
 
         number = int(match.group(1))
 
-        start = match.end()
+        if not 1 <= number <= 100:
+            continue
 
-        if index + 1 < len(matches):
-            end = matches[index + 1].start()
-        else:
-            end = len(text)
+        start = match.end()
+        next_match = None
+
+        for candidate in matches[index + 1:]:
+
+            candidate_number = int(candidate.group(1))
+
+            if 1 <= candidate_number <= 100:
+                next_match = candidate
+                break
+
+        end = (
+            next_match.start()
+            if next_match
+            else len(text)
+        )
 
         block = text[start:end].strip()
 
         if not block:
             continue
 
-        # Find options:
-        # (A), (B), (C), (D)
-        # A. B. C. D.
-        # A) B) C) D)
-
         option_pattern = re.compile(
-            r"(?m)(?:"
+            r"(?im)(?:"
             r"^\s*([A-D])\s*[.)]\s*"
             r"|"
             r"(?<!\w)\(([A-D])\)\s*"
             r")"
         )
 
-        option_matches = list(
-            option_pattern.finditer(block)
-        )
+        option_matches = list(option_pattern.finditer(block))
 
         options = {
             "A": "",
@@ -407,41 +420,35 @@ def extract_questions(text):
 
         if option_matches:
 
-            question_text = block[
-                :option_matches[0].start()
-            ]
+            question_text = block[:option_matches[0].start()]
 
             for i, option_match in enumerate(option_matches):
 
                 letter = (
                     option_match.group(1)
                     or option_match.group(2)
-                )
+                ).upper()
 
                 option_start = option_match.end()
 
-                if i + 1 < len(option_matches):
-                    option_end = option_matches[i + 1].start()
-                else:
-                    option_end = len(block)
+                option_end = (
+                    option_matches[i + 1].start()
+                    if i + 1 < len(option_matches)
+                    else len(block)
+                )
 
-                option_text = block[
-                    option_start:option_end
-                ]
+                option_text = clean_text(
+                    block[option_start:option_end]
+                )
 
-                option_text = clean_text(option_text)
-
-                # Keep the first occurrence of each option
-                if not options[letter]:
+                if not options.get(letter, ""):
                     options[letter] = option_text
 
         else:
-
             question_text = block
 
         question_text = clean_text(question_text)
 
-        # Ignore empty question blocks
         if not question_text:
             continue
 
@@ -451,10 +458,42 @@ def extract_questions(text):
             "options": options
         })
 
-    return extracted
+    # Keep one best block per question number.
+    best_questions = {}
+
+    for item in extracted:
+
+        number = item["number"]
+
+        question_text = clean_text(
+            item.get("question", "")
+        )
+
+        options = item.get("options", {}) or {}
+
+        option_count = sum(
+            1 for letter in ["A", "B", "C", "D"]
+            if clean_text(options.get(letter, ""))
+        )
+
+        quality_score = len(question_text) + option_count * 200
+
+        if number not in best_questions:
+            best_questions[number] = (quality_score, item)
+
+        elif quality_score > best_questions[number][0]:
+            best_questions[number] = (quality_score, item)
+
+    unique_questions = [
+        best_questions[number][1]
+        for number in sorted(best_questions)
+    ]
+
+    return unique_questions
+
 
 # ==========================================
-# 5. EXTRACT ANSWERS FROM ANSWER KEY
+# 6. EXTRACT ANSWERS FROM ANSWER KEY
 # ==========================================
 
 def extract_answer_key(text):
@@ -466,7 +505,7 @@ def extract_answer_key(text):
         re.IGNORECASE
     )
 
-    matches = pattern.findall(text)
+    matches = pattern.findall(str(text or ""))
 
     for question_no, answer in matches:
 

@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+*.db
+uploads/
+
+check_count.py
+fix_2024.py
+test_extract.py
