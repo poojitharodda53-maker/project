@@ -143,6 +143,8 @@ EXTRA_KEYWORDS = {
         "dma", "input output", "i/o operation",
         "read status register", "data register",
         "multiplexer", "decoder", "register organization",
+        "synchronous counter", "ripple counter",
+        "combinational circuit", "mod 2 counter",
         "instruction processing", "fetch decode execute",
         "instruction sequencing", "instruction execution steps"
     ],
@@ -161,6 +163,8 @@ EXTRA_KEYWORDS = {
     ],
     4: [
         "relational algebra", "relational model",
+        "union operation", "union of relations",
+        "combines the rows of the two relations",
         "functional dependency", "candidate key",
         "primary key", "normalization", "1nf", "2nf",
         "3nf", "bcnf", "database transaction",
@@ -173,8 +177,10 @@ EXTRA_KEYWORDS = {
     ],
     5: [
         "operating system", "cpu scheduling", "waiting time",
-        "ready queue", "waiting queue", "round robin",
-        "sjf", "process scheduling", "process state",
+        "ready queue", "waiting queue", "ready state",
+        "ready and waiting for execution",
+        "shortest job first", "preemptive shortest job first",
+        "round robin", "sjf", "process scheduling", "process state",
         "interrupt protection", "top half", "bottom half",
         "system service routines", "linux",
         "file system", "layered file system",
@@ -271,15 +277,32 @@ EXTRA_KEYWORDS = {
 # 3. QUESTION CLASSIFICATION
 # ==========================================
 
-def classify_question(question):
+def classify_question(question, options=None):
 
-    text = str(question).lower()
-    text = re.sub(r"\s+", " ", text).strip()
+    question_text = str(question or "").lower()
+    question_text = re.sub(r"\s+", " ", question_text).strip()
 
-    ignored_keywords = {
-        "process", "array", "structure", "database",
-        "register", "searching", "sorting", "compiler",
-        "classification"
+    # Options can be a dictionary, list, tuple or string.
+    if isinstance(options, dict):
+        option_values = options.values()
+    elif isinstance(options, (list, tuple, set)):
+        option_values = options
+    elif options is None:
+        option_values = []
+    else:
+        option_values = [options]
+
+    options_text = " ".join(
+        str(value or "") for value in option_values
+    ).lower()
+
+    options_text = re.sub(r"\s+", " ", options_text).strip()
+
+    # Common words get lower weight.
+    weak_keywords = {
+        "process", "array", "structure", "relations", "union",
+        "group", "queue", "stack", "main memory", "dependencies",
+        "permutation", "combination", "xml", "logic"
     }
 
     scores = []
@@ -292,11 +315,16 @@ def classify_question(question):
             unit["keywords"] + EXTRA_KEYWORDS[index + 1]
         )
 
+        extra_keywords = {
+            keyword.lower().strip()
+            for keyword in EXTRA_KEYWORDS[index + 1]
+        }
+
         for keyword in keywords:
 
             keyword = keyword.lower().strip()
 
-            if not keyword or keyword in ignored_keywords:
+            if not keyword:
                 continue
 
             pattern = (
@@ -305,11 +333,28 @@ def classify_question(question):
                 + r"(?!\w)"
             )
 
-            if re.search(pattern, text):
-                if keyword in EXTRA_KEYWORDS[index + 1]:
+            is_extra = keyword in extra_keywords
+            is_weak = keyword in weak_keywords
+
+            # Main question gets higher priority.
+            if re.search(pattern, question_text):
+
+                if is_weak:
                     score += 2
+                elif is_extra:
+                    score += 6
                 else:
+                    score += 4
+
+            # Options get lower priority.
+            if options_text and re.search(pattern, options_text):
+
+                if is_weak:
                     score += 1
+                elif is_extra:
+                    score += 3
+                else:
+                    score += 2
 
         scores.append(score)
 
@@ -323,6 +368,7 @@ def classify_question(question):
         if score == best_score
     ]
 
+    # Avoid guessing when top scores are tied.
     if len(best_units) > 1:
         return None, best_score
 
@@ -449,6 +495,17 @@ def extract_questions(text):
 
         question_text = clean_text(question_text)
 
+        # Preserve questions that begin directly with options.
+        if not question_text:
+            question_text = clean_text(block)
+
+            options = {
+                "A": "",
+                "B": "",
+                "C": "",
+                "D": ""
+            }
+
         if not question_text:
             continue
 
@@ -458,7 +515,7 @@ def extract_questions(text):
             "options": options
         })
 
-    # Keep one best block per question number.
+    # Keep the best extracted block for each question number.
     best_questions = {}
 
     for item in extracted:

@@ -34,6 +34,7 @@ from analyzer import (
 # ==========================================
 
 app = Flask(__name__)
+
 app.secret_key = "ugc_net_secret_key"
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -161,6 +162,7 @@ def init_db():
                 "uploaded_at": "TEXT",
                 "file_hash": "TEXT"
             },
+
             "questions": {
                 "paper_id": "INTEGER",
                 "original_no": "TEXT",
@@ -209,10 +211,12 @@ def init_db():
             ON papers(file_hash)
         """)
 
+        # Fill missing exam years from existing filenames.
         old_papers = con.execute("""
             SELECT id, filename, exam_year
             FROM papers
-            WHERE exam_year IS NULL OR TRIM(exam_year) = ''
+            WHERE exam_year IS NULL
+               OR TRIM(exam_year) = ''
         """).fetchall()
 
         for paper in old_papers:
@@ -228,7 +232,10 @@ def init_db():
                     UPDATE papers
                     SET exam_year = ?
                     WHERE id = ?
-                """, (match.group(1), paper["id"]))
+                """, (
+                    match.group(1),
+                    paper["id"]
+                ))
 
 
 # ==========================================
@@ -246,15 +253,33 @@ def allowed_file(filename):
 
 def get_unit_name(unit_no):
 
-    if unit_no and 1 <= int(unit_no) <= len(UNITS):
-        return UNITS[int(unit_no) - 1]["name"]
+    try:
+        unit_no = int(unit_no)
+    except (TypeError, ValueError):
+        return "Unclassified"
+
+    if 1 <= unit_no <= len(UNITS):
+        return UNITS[unit_no - 1]["name"]
 
     return "Unclassified"
 
 
-def get_pdf_details(filename, default_year="", default_session=""):
+# ==========================================
+# PDF YEAR AND EXAM SESSION DETECTION
+# ==========================================
 
-    year_match = re.search(r"(20\d{2})", filename or "")
+def get_pdf_details(
+    filename,
+    default_year="",
+    default_session=""
+):
+
+    filename = filename or ""
+
+    year_match = re.search(
+        r"(20\d{2})",
+        filename
+    )
 
     year = (
         year_match.group(1)
@@ -262,13 +287,31 @@ def get_pdf_details(filename, default_year="", default_session=""):
         else default_year
     )
 
-    lower_name = (filename or "").lower()
+    lower_name = filename.lower()
 
     if "june" in lower_name:
         exam_session = "June"
 
-    elif "december" in lower_name:
+    elif (
+        "december" in lower_name
+        or "dec" in lower_name
+    ):
         exam_session = "December"
+
+    elif (
+        "september" in lower_name
+        or "sep" in lower_name
+    ):
+        exam_session = "September"
+
+    elif (
+        "november" in lower_name
+        or "nov" in lower_name
+    ):
+        exam_session = "November"
+
+    elif "july" in lower_name:
+        exam_session = "July"
 
     else:
         exam_session = default_session
@@ -295,9 +338,17 @@ def normalize_question(question):
 
     question = str(question or "").lower()
 
-    question = re.sub(r"\s+", " ", question)
+    question = re.sub(
+        r"\s+",
+        " ",
+        question
+    )
 
-    question = re.sub(r"[^\w\s]", "", question)
+    question = re.sub(
+        r"[^\w\s]",
+        "",
+        question
+    )
 
     return question.strip()
 
@@ -322,6 +373,7 @@ def extract_pdf_content(filepath):
 
             page_text = page.get_text("text") or ""
 
+            # Detect the beginning of the answer key.
             if re.search(
                 r"(?i)\bAnswer\s*Key\b",
                 page_text
@@ -340,6 +392,16 @@ def extract_pdf_content(filepath):
                 continue
 
             words = page.get_text("words")
+
+            # If word extraction is unavailable,
+            # use the page's normal text.
+            if not words:
+
+                if page_text.strip():
+                    text_parts.append(page_text)
+
+                continue
+
             middle_x = page.rect.width / 2
 
             columns = [[], []]
@@ -364,7 +426,10 @@ def extract_pdf_content(filepath):
             for column_words in columns:
 
                 column_words.sort(
-                    key=lambda item: (item[0], item[1])
+                    key=lambda item: (
+                        item[0],
+                        item[1]
+                    )
                 )
 
                 lines = []
@@ -404,6 +469,7 @@ def extract_pdf_content(filepath):
                 if column_text.strip():
                     text_parts.append(column_text)
 
+                # Detect common passage for questions 96-100.
                 if (
                     "Directions" in column_text
                     and "96" in column_text
@@ -425,14 +491,23 @@ def extract_pdf_content(filepath):
 # 7. PROCESS ONE PDF
 # ==========================================
 
-def process_pdf(file, default_year="", default_session=""):
+def process_pdf(
+    file,
+    default_year="",
+    default_session=""
+):
 
     original_filename = secure_filename(
         file.filename or ""
     )
 
-    if not original_filename or not allowed_file(original_filename):
-        raise ValueError("Please select a valid PDF file.")
+    if (
+        not original_filename
+        or not allowed_file(original_filename)
+    ):
+        raise ValueError(
+            "Please select a valid PDF file."
+        )
 
     saved_name = (
         datetime.now().strftime("%Y%m%d%H%M%S%f")
@@ -449,12 +524,14 @@ def process_pdf(file, default_year="", default_session=""):
 
     try:
 
+        # Calculate file hash.
         file_hash = calculate_file_hash(filepath)
 
+        # Check whether the PDF already exists.
         with get_db() as con:
 
             existing_paper = con.execute("""
-                SELECT id, filename, exam_year
+                SELECT id
                 FROM papers
                 WHERE file_hash = ?
                 LIMIT 1
@@ -468,32 +545,49 @@ def process_pdf(file, default_year="", default_session=""):
                 + str(existing_paper["id"])
             )
 
+        # Extract PDF content.
         text, answer_text, common_passage = (
             extract_pdf_content(filepath)
         )
 
         if not text.strip():
-            raise ValueError("No readable question text found in PDF.")
 
+            raise ValueError(
+                "No readable question text found in PDF."
+            )
+
+        # Extract questions and options.
         extracted = extract_questions(text)
 
         if not extracted:
-            raise ValueError("Questions not detected. Check analyzer.py.")
 
+            raise ValueError(
+                "Questions not detected. Check analyzer.py."
+            )
+
+        # Remove duplicate question blocks.
         unique_questions = []
         seen_questions = set()
 
         for q in extracted:
 
-            number = str(q.get("number", ""))
+            number = str(
+                q.get("number", "")
+            )
 
             normalized = normalize_question(
                 q.get("question", "")
             )
 
-            key = (number, normalized)
+            key = (
+                number,
+                normalized
+            )
 
-            if not normalized or key in seen_questions:
+            if (
+                not normalized
+                or key in seen_questions
+            ):
                 continue
 
             seen_questions.add(key)
@@ -502,30 +596,50 @@ def process_pdf(file, default_year="", default_session=""):
         extracted = unique_questions
 
         if not extracted:
-            raise ValueError("No unique questions found in this PDF.")
 
+            raise ValueError(
+                "No unique questions found in this PDF."
+            )
+
+        # Extract answer key.
         answer_key = {}
 
         if answer_text.strip():
-            answer_key = extract_answer_key(answer_text)
+
+            answer_key = extract_answer_key(
+                answer_text
+            )
 
         for q in extracted:
 
-            q_number = str(q.get("number", ""))
+            q_number = str(
+                q.get("number", "")
+            )
 
-            answer = answer_key.get(q_number, "")
+            answer = answer_key.get(
+                q_number,
+                ""
+            )
 
             if not answer and q_number.isdigit():
-                answer = answer_key.get(int(q_number), "")
+
+                answer = answer_key.get(
+                    int(q_number),
+                    ""
+                )
 
             q["correct_answer"] = answer
 
+        # Attach common passage to questions 96-100.
         if common_passage:
 
             for q in extracted:
 
                 try:
-                    number = int(q.get("number", 0))
+                    number = int(
+                        q.get("number", 0)
+                    )
+
                 except (TypeError, ValueError):
                     number = 0
 
@@ -537,12 +651,14 @@ def process_pdf(file, default_year="", default_session=""):
                         + q.get("question", "")
                     )
 
+        # Detect exam year and session.
         year, exam_session = get_pdf_details(
             original_filename,
             default_year,
             default_session
         )
 
+        # Save paper and questions.
         with get_db() as con:
 
             duplicate = con.execute("""
@@ -583,21 +699,20 @@ def process_pdf(file, default_year="", default_session=""):
 
             for q in extracted:
 
-                options = q.get("options", {}) or {}
+                options = q.get(
+                    "options",
+                    {}
+                ) or {}
 
-                classification_text = " ".join([
-                    q.get("question", "") or "",
-                    options.get("A", "") or "",
-                    options.get("B", "") or "",
-                    options.get("C", "") or "",
-                    options.get("D", "") or ""
-                ])
-
+                # Classify question and options.
                 unit_no, confidence = classify_question(
-                    classification_text
+                    q.get("question", ""),
+                    options
                 )
 
-                unit_name = get_unit_name(unit_no)
+                unit_name = get_unit_name(
+                    unit_no
+                )
 
                 con.execute("""
                     INSERT INTO questions (
@@ -644,29 +759,50 @@ def process_pdf(file, default_year="", default_session=""):
 # 8. LOGIN
 # ==========================================
 
-@app.route("/login", methods=["GET", "POST"])
+@app.route(
+    "/login",
+    methods=["GET", "POST"]
+)
 def login():
 
     if request.method == "POST":
 
         username = request.form.get(
-            "username", ""
+            "username",
+            ""
         ).strip()
 
-        password = request.form.get("password", "")
-        role = request.form.get("role", "").strip().lower()
+        password = request.form.get(
+            "password",
+            ""
+        )
+
+        role = request.form.get(
+            "role",
+            ""
+        ).strip().lower()
 
         if role not in ("admin", "student"):
-            flash("Please select a valid login role.")
-            return redirect(url_for("login"))
+
+            flash(
+                "Please select a valid login role."
+            )
+
+            return redirect(
+                url_for("login")
+            )
 
         with get_db() as con:
 
             user = con.execute("""
                 SELECT *
                 FROM users
-                WHERE username = ? AND role = ?
-            """, (username, role)).fetchone()
+                WHERE username = ?
+                  AND role = ?
+            """, (
+                username,
+                role
+            )).fetchone()
 
         if user and check_password_hash(
             user["password"],
@@ -681,9 +817,13 @@ def login():
 
             flash("Login successful.")
 
-            return redirect(url_for("dashboard"))
+            return redirect(
+                url_for("dashboard")
+            )
 
-        flash("Invalid username, password or role.")
+        flash(
+            "Invalid username, password or role."
+        )
 
     return render_template("login.html")
 
@@ -692,35 +832,58 @@ def login():
 # 9. STUDENT REGISTRATION
 # ==========================================
 
-@app.route("/register", methods=["GET", "POST"])
+@app.route(
+    "/register",
+    methods=["GET", "POST"]
+)
 def register():
 
     if request.method == "POST":
 
         username = request.form.get(
-            "username", ""
+            "username",
+            ""
         ).strip()
 
-        password = request.form.get("password", "")
+        password = request.form.get(
+            "password",
+            ""
+        )
 
         confirm_password = request.form.get(
-            "confirm_password", ""
+            "confirm_password",
+            ""
         )
 
         if not username or not password:
 
-            flash("Please enter all required details.")
-            return redirect(url_for("register"))
+            flash(
+                "Please enter all required details."
+            )
+
+            return redirect(
+                url_for("register")
+            )
 
         if password != confirm_password:
 
-            flash("Passwords do not match.")
-            return redirect(url_for("register"))
+            flash(
+                "Passwords do not match."
+            )
+
+            return redirect(
+                url_for("register")
+            )
 
         if len(password) < 8:
 
-            flash("Password must contain at least 8 characters.")
-            return redirect(url_for("register"))
+            flash(
+                "Password must contain at least 8 characters."
+            )
+
+            return redirect(
+                url_for("register")
+            )
 
         try:
 
@@ -738,12 +901,19 @@ def register():
                     generate_password_hash(password)
                 ))
 
-            flash("Registration successful. Please login.")
-            return redirect(url_for("login"))
+            flash(
+                "Registration successful. Please login."
+            )
+
+            return redirect(
+                url_for("login")
+            )
 
         except sqlite3.IntegrityError:
 
-            flash("Username already exists.")
+            flash(
+                "Username already exists."
+            )
 
     return render_template("register.html")
 
@@ -756,7 +926,9 @@ def register():
 @login_required
 def dashboard():
 
-    return redirect(url_for("home"))
+    return redirect(
+        url_for("home")
+    )
 
 
 @app.route("/logout")
@@ -764,9 +936,13 @@ def logout():
 
     session.clear()
 
-    flash("Logged out successfully.")
+    flash(
+        "Logged out successfully."
+    )
 
-    return redirect(url_for("login"))
+    return redirect(
+        url_for("login")
+    )
 
 
 # ==========================================
@@ -790,7 +966,9 @@ def home():
         """).fetchone()[0]
 
         rows = con.execute("""
-            SELECT unit_no, COUNT(*) AS total
+            SELECT
+                unit_no,
+                COUNT(*) AS total
             FROM questions
             WHERE unit_no BETWEEN 1 AND 10
             GROUP BY unit_no
@@ -828,17 +1006,27 @@ def home():
 # 12. PDF UPLOAD - ADMIN ONLY
 # ==========================================
 
-@app.route("/upload", methods=["GET", "POST"])
+@app.route(
+    "/upload",
+    methods=["GET", "POST"]
+)
 @admin_required
 def upload():
 
     if request.method == "POST":
 
-        files = request.files.getlist("pdf_files")
+        files = request.files.getlist(
+            "pdf_files"
+        )
 
-        if not files or not any(f.filename for f in files):
+        if (
+            not files
+            or not any(f.filename for f in files)
+        ):
 
-            single_file = request.files.get("pdf_file")
+            single_file = request.files.get(
+                "pdf_file"
+            )
 
             files = (
                 [single_file]
@@ -853,15 +1041,22 @@ def upload():
 
         if not files:
 
-            flash("Please select PDF files.")
-            return redirect(url_for("upload"))
+            flash(
+                "Please select PDF files."
+            )
+
+            return redirect(
+                url_for("upload")
+            )
 
         year = request.form.get(
-            "exam_year", ""
+            "exam_year",
+            ""
         ).strip()
 
         exam_session = request.form.get(
-            "exam_session", ""
+            "exam_session",
+            ""
         ).strip()
 
         success_count = 0
@@ -901,9 +1096,13 @@ def upload():
         for error in errors:
             flash(error)
 
-        return redirect(url_for("papers"))
+        return redirect(
+            url_for("papers")
+        )
 
-    return render_template("upload.html")
+    return render_template(
+        "upload.html"
+    )
 
 
 # ==========================================
@@ -914,8 +1113,13 @@ def upload():
 @login_required
 def unit_detail(unit_no):
 
-    if unit_no < 1 or unit_no > len(UNITS):
-        return redirect(url_for("home"))
+    if (
+        unit_no < 1
+        or unit_no > len(UNITS)
+    ):
+        return redirect(
+            url_for("home")
+        )
 
     unit = UNITS[unit_no - 1]
 
@@ -948,13 +1152,17 @@ def unit_detail(unit_no):
                 END,
                 p.exam_year DESC,
                 p.id DESC
-        """, (unit_no,)).fetchall()
+        """, (
+            unit_no,
+        )).fetchall()
 
         total = con.execute("""
             SELECT COUNT(*)
             FROM questions
             WHERE unit_no = ?
-        """, (unit_no,)).fetchone()[0]
+        """, (
+            unit_no,
+        )).fetchone()[0]
 
     return render_template(
         "unit.html",
@@ -969,12 +1177,22 @@ def unit_detail(unit_no):
 # 14. SELECTED YEAR PDF QUESTIONS
 # ==========================================
 
-@app.route("/unit/<int:unit_no>/paper/<int:paper_id>")
+@app.route(
+    "/unit/<int:unit_no>/paper/<int:paper_id>"
+)
 @login_required
-def unit_paper_questions(unit_no, paper_id):
+def unit_paper_questions(
+    unit_no,
+    paper_id
+):
 
-    if unit_no < 1 or unit_no > len(UNITS):
-        return redirect(url_for("home"))
+    if (
+        unit_no < 1
+        or unit_no > len(UNITS)
+    ):
+        return redirect(
+            url_for("home")
+        )
 
     unit = UNITS[unit_no - 1]
 
@@ -984,7 +1202,9 @@ def unit_paper_questions(unit_no, paper_id):
             SELECT *
             FROM papers
             WHERE id = ?
-        """, (paper_id,)).fetchone()
+        """, (
+            paper_id,
+        )).fetchone()
 
         if not paper:
 
@@ -1002,8 +1222,13 @@ def unit_paper_questions(unit_no, paper_id):
             FROM questions
             WHERE paper_id = ?
               AND unit_no = ?
-            ORDER BY CAST(original_no AS INTEGER), id
-        """, (paper_id, unit_no)).fetchall()
+            ORDER BY
+                CAST(original_no AS INTEGER),
+                id
+        """, (
+            paper_id,
+            unit_no
+        )).fetchall()
 
     return render_template(
         "unit_questions.html",
@@ -1029,19 +1254,28 @@ def paper_detail(paper_id):
             SELECT *
             FROM papers
             WHERE id = ?
-        """, (paper_id,)).fetchone()
+        """, (
+            paper_id,
+        )).fetchone()
+
+        if not paper:
+
+            flash("Paper not found.")
+
+            return redirect(
+                url_for("home")
+            )
 
         questions = con.execute("""
             SELECT *
             FROM questions
             WHERE paper_id = ?
-            ORDER BY CAST(original_no AS INTEGER), id
-        """, (paper_id,)).fetchall()
-
-    if not paper:
-
-        flash("Paper not found.")
-        return redirect(url_for("home"))
+            ORDER BY
+                CAST(original_no AS INTEGER),
+                id
+        """, (
+            paper_id,
+        )).fetchall()
 
     return render_template(
         "paper.html",
@@ -1065,7 +1299,10 @@ def reassign(question_id):
     try:
 
         unit_no = int(
-            request.form.get("unit_no", 0)
+            request.form.get(
+                "unit_no",
+                0
+            )
         )
 
     except (ValueError, TypeError):
@@ -1075,7 +1312,9 @@ def reassign(question_id):
     if unit_no not in range(1, 11):
         unit_no = 0
 
-    unit_name = get_unit_name(unit_no)
+    unit_name = get_unit_name(
+        unit_no
+    )
 
     with get_db() as con:
 
@@ -1083,7 +1322,9 @@ def reassign(question_id):
             SELECT paper_id
             FROM questions
             WHERE id = ?
-        """, (question_id,)).fetchone()
+        """, (
+            question_id,
+        )).fetchone()
 
         if result:
 
@@ -1109,7 +1350,9 @@ def reassign(question_id):
             )
         )
 
-    return redirect(url_for("home"))
+    return redirect(
+        url_for("home")
+    )
 
 
 # ==========================================
@@ -1156,48 +1399,77 @@ def delete_paper(paper_id):
             SELECT filename
             FROM papers
             WHERE id = ?
-        """, (paper_id,)).fetchone()
+        """, (
+            paper_id,
+        )).fetchone()
+
+        if not paper:
+
+            flash("Paper not found.")
+
+            return redirect(
+                url_for("papers")
+            )
 
         con.execute("""
             DELETE FROM questions
             WHERE paper_id = ?
-        """, (paper_id,))
+        """, (
+            paper_id,
+        ))
 
         con.execute("""
             DELETE FROM papers
             WHERE id = ?
-        """, (paper_id,))
+        """, (
+            paper_id,
+        ))
 
-    if paper:
+    original_filename = (
+        paper["filename"] or ""
+    )
 
-        original_filename = paper["filename"] or ""
+    for saved_filename in os.listdir(
+        UPLOAD_FOLDER
+    ):
 
-        for saved_filename in os.listdir(UPLOAD_FOLDER):
+        if saved_filename.endswith(
+            "_" + original_filename
+        ):
 
-            if saved_filename.endswith(
-                "_" + original_filename
-            ):
+            filepath = os.path.join(
+                UPLOAD_FOLDER,
+                saved_filename
+            )
 
-                filepath = os.path.join(
-                    UPLOAD_FOLDER,
-                    saved_filename
-                )
+            if os.path.isfile(filepath):
+                os.remove(filepath)
 
-                if os.path.isfile(filepath):
-                    os.remove(filepath)
+    flash(
+        "Paper deleted successfully."
+    )
 
-    flash("Paper deleted successfully.")
-
-    return redirect(url_for("papers"))
+    return redirect(
+        url_for("papers")
+    )
 
 
 # ==========================================
 # 19. REPORTS - UNIT COUNTS
 # ==========================================
 
-@app.route("/analysis")
+@app.route(
+    "/analysis",
+    methods=["GET", "POST"]
+)
 @login_required
 def analysis():
+
+    unit_data = []
+    questions = []
+
+    selected_unit = ""
+    analyzed = False
 
     with get_db() as con:
 
@@ -1208,15 +1480,57 @@ def analysis():
                 COUNT(*) AS total
             FROM questions
             WHERE unit_no BETWEEN 1 AND 10
-            GROUP BY unit_no, unit_name
+            GROUP BY
+                unit_no,
+                unit_name
             ORDER BY unit_no
         """).fetchall()
+
+        if request.method == "POST":
+
+            selected_unit = request.form.get(
+                "unit",
+                ""
+            ).strip()
+
+            analyzed = True
+
+            if selected_unit == "":
+
+                questions = con.execute("""
+                    SELECT *
+                    FROM questions
+                    WHERE unit_no BETWEEN 1 AND 10
+                    ORDER BY
+                        unit_no,
+                        paper_id,
+                        CAST(original_no AS INTEGER)
+                """).fetchall()
+
+            elif (
+                selected_unit.isdigit()
+                and 1 <= int(selected_unit) <= 10
+            ):
+
+                questions = con.execute("""
+                    SELECT *
+                    FROM questions
+                    WHERE unit_no = ?
+                    ORDER BY
+                        paper_id,
+                        CAST(original_no AS INTEGER)
+                """, (
+                    int(selected_unit),
+                )).fetchall()
 
     return render_template(
         "analysis.html",
         units=UNITS,
         unit_data=unit_data,
-        year_data=[]
+        year_data=[],
+        questions=questions,
+        selected_unit=selected_unit,
+        analyzed=analyzed
     )
 
 
@@ -1227,12 +1541,19 @@ def analysis():
 @app.errorhandler(413)
 def file_too_large(error):
 
-    flash("Uploaded files exceed the allowed size.")
+    flash(
+        "Uploaded files exceed the allowed size."
+    )
 
     if session.get("role") == "admin":
-        return redirect(url_for("upload"))
 
-    return redirect(url_for("home"))
+        return redirect(
+            url_for("upload")
+        )
+
+    return redirect(
+        url_for("home")
+    )
 
 
 # ==========================================
@@ -1248,6 +1569,7 @@ if __name__ == "__main__":
     print("Official 10 Units Loaded")
     print("Admin and Student Roles Enabled")
     print("Admin-only PDF Management Enabled")
+    print("PDF Year and Session Detection Enabled")
     print("Database Ready")
     print("===================================")
 

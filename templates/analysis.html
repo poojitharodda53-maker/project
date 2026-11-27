@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -27,7 +28,7 @@
             <select name="unit">
                 <option value="">All Units</option>
                 {% for unit in units %}
-                <option value="{{ unit }}">{{ unit }}</option>
+                <option value="{{ loop.index }}">{{ unit.name }}</option>
                 {% endfor %}
             </select>
 
@@ -39,6 +40,30 @@
 
         <br>
         <a href="{{ url_for('dashboard') }}">Back to Dashboard</a>
+        {% if analyzed %}
+    <hr>
+    <h2>Analysis Results</h2>
+
+    <p>Total Questions Found: {{ questions|length }}</p>
+
+    {% for q in questions %}
+        <div class="question-card">
+            <h3>Question {{ loop.index }}</h3>
+
+            <p>{{ q['question'] }}</p>
+
+            <p>A. {{ q['option_a'] }}</p>
+            <p>B. {{ q['option_b'] }}</p>
+            <p>C. {{ q['option_c'] }}</p>
+            <p>D. {{ q['option_d'] }}</p>
+
+            <p><strong>Correct Answer:</strong>
+                {{ q['correct_answer'] or 'Not Available' }}
+            </p>
+        </div>
+        <hr>
+    {% endfor %}
+{% endif %}
     </div>
 
 </body>
