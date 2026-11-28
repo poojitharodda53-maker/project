@@ -1,129 +1,795 @@
 
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-{% block content %}
+    <title>Dashboard | UGC NET CS Paper 2 Analyzer</title>
 
-<div class="dashboard-container">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-    <!-- LOGOUT BUTTON -->
-    <div style="display: flex; justify-content: flex-end; margin-bottom: 15px;">
-        <a href="{{ url_for('logout') }}"
-           style="
-               background: #dc3545;
-               color: white;
-               padding: 10px 22px;
-               border-radius: 8px;
-               text-decoration: none;
-               font-weight: 600;
-               display: inline-block;
-           ">
-            ↪ Logout
-        </a>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+        :root {
+            --bg: #090D20;
+            --card: #151B38;
+            --card-light: #1B2347;
+            --blue: #3987FF;
+            --purple: #8655F7;
+            --pink: #D45CF5;
+            --cyan: #35D5F2;
+            --text: #F5F4FF;
+            --muted: #A6ACCA;
+            --border: rgba(150, 145, 255, 0.19);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            background:
+                radial-gradient(circle at 10% 5%, rgba(57,135,255,.17), transparent 30%),
+                radial-gradient(circle at 90% 10%, rgba(134,85,247,.19), transparent 30%),
+                var(--bg);
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        .dashboard {
+            max-width: 1250px;
+            width: 94%;
+            margin: auto;
+            padding: 25px 0 60px;
+        }
+
+        /* NAVBAR */
+
+        .top-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 15px 22px;
+            margin-bottom: 28px;
+            background: rgba(21,27,56,.88);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            backdrop-filter: blur(15px);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-icon {
+            width: 48px;
+            height: 48px;
+            display: grid;
+            place-items: center;
+            border-radius: 14px;
+            font-size: 25px;
+            background: linear-gradient(135deg, var(--blue), var(--purple));
+            box-shadow: 0 5px 20px rgba(105,90,255,.3);
+        }
+
+        .brand-name {
+            font-family: 'Outfit', sans-serif;
+            font-size: 16px;
+            font-weight: 800;
+            letter-spacing: .5px;
+        }
+
+        .brand-subtitle {
+            display: block;
+            margin-top: 3px;
+            color: var(--cyan);
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-links a {
+            padding: 11px 15px;
+            color: var(--muted);
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            transition: .2s;
+        }
+
+        .nav-links a:hover {
+            color: white;
+            background: rgba(134,85,247,.18);
+        }
+
+        .nav-links .logout {
+            color: white;
+            background: linear-gradient(110deg, #397DFF, #8655F7);
+        }
+
+        /* HERO */
+
+        .hero {
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 25px;
+            padding: 42px;
+            margin-bottom: 28px;
+            border: 1px solid var(--border);
+            border-radius: 25px;
+            background:
+                linear-gradient(115deg,
+                    rgba(38,91,190,.38),
+                    rgba(105,60,190,.38),
+                    rgba(160,65,190,.22));
+            box-shadow: 0 15px 45px rgba(0,0,0,.18);
+        }
+
+        .hero::after {
+            content: "🎓";
+            position: absolute;
+            right: 55px;
+            top: 20px;
+            font-size: 115px;
+            opacity: .10;
+            transform: rotate(-12deg);
+            pointer-events: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 720px;
+        }
+
+        .hero-tag {
+            display: inline-block;
+            padding: 8px 14px;
+            margin-bottom: 17px;
+            border: 1px solid rgba(255,255,255,.2);
+            border-radius: 30px;
+            color: #C8C5FF;
+            background: rgba(255,255,255,.08);
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+        }
+
+        .welcome {
+            color: #C7D5FF;
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .hero h1 {
+            margin: 0 0 14px;
+            font-family: 'Outfit', sans-serif;
+            font-size: clamp(29px, 4vw, 43px);
+            line-height: 1.2;
+            font-weight: 800;
+        }
+
+        .hero h1 span {
+            background: linear-gradient(90deg, #59B7FF, #B18AFF, #F09BFF);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .hero-description {
+            max-width: 600px;
+            color: #C1C8E5;
+            line-height: 1.8;
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 13px;
+        }
+
+        .hero-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 13px 19px;
+            border-radius: 11px;
+            color: white;
+            font-size: 13px;
+            font-weight: 800;
+            transition: .25s;
+        }
+
+        .hero-btn:hover {
+            transform: translateY(-3px);
+        }
+
+        .primary-btn {
+            background: linear-gradient(110deg, #3987FF, #8655F7);
+            box-shadow: 0 7px 22px rgba(91,100,255,.25);
+        }
+
+        .secondary-btn {
+            border: 1px solid rgba(255,255,255,.25);
+            background: rgba(255,255,255,.08);
+        }
+
+        .hero-visual {
+            position: relative;
+            z-index: 1;
+            flex-shrink: 0;
+            width: 155px;
+            height: 155px;
+            display: grid;
+            place-items: center;
+            border-radius: 35px;
+            background: linear-gradient(135deg, #3987FF, #8655F7, #C45AF0);
+            box-shadow: 0 15px 45px rgba(91,100,255,.3);
+            font-size: 75px;
+        }
+
+        /* SECTION TITLE */
+
+        .section-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin: 34px 0 18px;
+        }
+
+        .section-heading h2 {
+            margin: 0;
+            font-family: 'Outfit', sans-serif;
+            font-size: 23px;
+            font-weight: 800;
+        }
+
+        .section-heading p {
+            margin: 6px 0 0;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .section-tag {
+            color: #B9A5FF;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        /* STATISTICS */
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 17px;
+        }
+
+        .stat-card {
+            position: relative;
+            overflow: hidden;
+            padding: 22px;
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            background: linear-gradient(145deg, #192143, #111832);
+            transition: .25s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(134,85,247,.55);
+        }
+
+        .stat-icon {
+            width: 43px;
+            height: 43px;
+            display: grid;
+            place-items: center;
+            margin-bottom: 17px;
+            border-radius: 13px;
+            font-size: 21px;
+        }
+
+        .stat-blue { background: rgba(57,135,255,.18); }
+        .stat-purple { background: rgba(134,85,247,.20); }
+        .stat-cyan { background: rgba(53,213,242,.15); }
+        .stat-pink { background: rgba(212,92,245,.17); }
+
+        .stat-number {
+            display: block;
+            font-family: 'Outfit', sans-serif;
+            font-size: 31px;
+            font-weight: 800;
+            color: white;
+        }
+
+        .stat-label {
+            display: block;
+            margin-top: 5px;
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* UNIT CARDS */
+
+        .units-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .unit-card {
+            position: relative;
+            overflow: hidden;
+            padding: 22px;
+            min-height: 195px;
+            border: 1px solid var(--border);
+            border-radius: 19px;
+            background: linear-gradient(145deg, #192143, #121831);
+            transition: .25s ease;
+        }
+
+        .unit-card:hover {
+            transform: translateY(-5px);
+            border-color: #8066F5;
+            box-shadow: 0 12px 30px rgba(93,75,220,.15);
+        }
+
+        .unit-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+
+        .unit-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 42px;
+            height: 42px;
+            border-radius: 13px;
+            color: white;
+            background: linear-gradient(135deg, #3987FF, #8655F7);
+            font-family: 'Outfit', sans-serif;
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        .unit-count {
+            color: #AFC7FF;
+            background: rgba(57,135,255,.12);
+            border: 1px solid rgba(57,135,255,.2);
+            border-radius: 30px;
+            padding: 7px 10px;
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .unit-card h3 {
+            min-height: 46px;
+            margin: 0 0 17px;
+            color: #F4F2FF;
+            font-family: 'Outfit', sans-serif;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .unit-explore {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #A994FF;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .unit-explore:hover {
+            color: #55C9FF;
+        }
+
+        /* ROLE DASHBOARD */
+
+        .role-panel {
+            margin-top: 35px;
+            padding: 25px;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            background: linear-gradient(140deg, rgba(27,35,71,.95), rgba(18,24,49,.95));
+        }
+
+        .role-panel h2 {
+            margin: 0 0 8px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 22px;
+        }
+
+        .role-panel > p {
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.7;
+            margin: 0 0 20px;
+        }
+
+        .role-actions {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 13px;
+        }
+
+        .role-action {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            background: rgba(255,255,255,.035);
+            color: white;
+            font-size: 13px;
+            font-weight: 700;
+            transition: .2s;
+        }
+
+        .role-action:hover {
+            background: rgba(134,85,247,.15);
+            border-color: #8066F5;
+            transform: translateY(-2px);
+        }
+
+        .role-action span {
+            font-size: 22px;
+        }
+
+        .footer {
+            margin-top: 35px;
+            padding: 18px;
+            text-align: center;
+            color: #8189AD;
+            font-size: 11px;
+            border-top: 1px solid var(--border);
+        }
+
+        /* RESPONSIVE */
+
+        @media (max-width: 900px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .units-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .hero-visual {
+                width: 120px;
+                height: 120px;
+                font-size: 58px;
+            }
+        }
+
+        @media (max-width: 650px) {
+            .dashboard {
+                width: 92%;
+                padding-top: 13px;
+            }
+
+            .top-nav {
+                align-items: flex-start;
+                flex-direction: column;
+                padding: 15px;
+            }
+
+            .nav-links {
+                width: 100%;
+                flex-wrap: wrap;
+            }
+
+            .nav-links a {
+                padding: 9px 10px;
+                font-size: 11px;
+            }
+
+            .hero {
+                padding: 25px;
+            }
+
+            .hero-visual {
+                display: none;
+            }
+
+            .hero h1 {
+                font-size: 29px;
+            }
+
+            .stats-grid,
+            .units-grid,
+            .role-actions {
+                grid-template-columns: 1fr;
+            }
+
+            .section-heading h2 {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="dashboard">
+
+    <!-- NAVIGATION -->
+
+    <nav class="top-nav">
+
+        <div class="brand">
+            <div class="brand-icon">🎓</div>
+
+            <div>
+                <div class="brand-name">UGC NET COMPUTER SCIENCE</div>
+                <span class="brand-subtitle">PAPER 2 ANALYZER</span>
+            </div>
+        </div>
+
+        <div class="nav-links">
+
+            {% if session.get('role') == 'admin' %}
+            <a href="{{ url_for('upload') }}">Upload PDF</a>
+            {% endif %}
+
+            <a href="{{ url_for('papers') }}">Question Papers</a>
+
+            <a href="{{ url_for('analysis') }}">Question Analysis</a>
+
+            <a href="{{ url_for('logout') }}" class="logout">
+                Logout ↗
+            </a>
+
+        </div>
+
+    </nav>
+
+
+    <!-- HERO SECTION -->
+
+    <section class="hero">
+
+        <div class="hero-content">
+
+            <span class="hero-tag">
+                🎓 UGC NET COMPUTER SCIENCE · PAPER 2
+            </span>
+
+            <div class="welcome">
+                Welcome, {{ session.get('username', 'User') }}!
+            </div>
+
+            <h1>
+                Your Complete UGC NET
+                <span>Question Paper Analyzer</span>
+            </h1>
+
+            <p class="hero-description">
+                Upload, explore and practice previous-year questions.
+                Discover all 10 Computer Science syllabus units
+                in one organized learning platform.
+            </p>
+
+            <div class="hero-buttons">
+
+                {% if session.get('role') == 'admin' %}
+                <a href="{{ url_for('upload') }}" class="hero-btn primary-btn">
+                    📤 Upload Question Paper
+                </a>
+                {% endif %}
+
+                <a href="{{ url_for('papers') }}" class="hero-btn secondary-btn">
+                    📚 View Question Papers
+                </a>
+
+            </div>
+
+        </div>
+
+        <div class="hero-visual">🎓</div>
+
+    </section>
+
+
+    <!-- STATISTICS -->
+
+    <div class="section-heading">
+        <div>
+            <h2>Dashboard Statistics</h2>
+            <p>Your question paper collection at a glance</p>
+        </div>
+
+        <span class="section-tag">LIVE DATABASE DATA</span>
     </div>
 
+    <section class="stats-grid">
 
-    <!-- WELCOME BANNER -->
-    <section class="welcome-banner">
-
-        <div class="hero-illustration">
-            <div style="font-size:75px;">📚 💻</div>
-            <div style="font-size:38px;">📄 🔍</div>
+        <div class="stat-card">
+            <div class="stat-icon stat-blue">📚</div>
+            <span class="stat-number">{{ papers }}</span>
+            <span class="stat-label">Uploaded Papers</span>
         </div>
 
-        <div class="welcome-content">
-            <p class="welcome-label">WELCOME TO</p>
-
-            <h1>UGC NET Computer Science</h1>
-
-            <h2>Paper 2 Question Paper Analyzer</h2>
-
-            <p>
-                Upload your previous year question papers and get
-                unit-wise and year-wise analysis of questions.
-            </p>
+        <div class="stat-card">
+            <div class="stat-icon stat-purple">❓</div>
+            <span class="stat-number">{{ total }}</span>
+            <span class="stat-label">Total Questions</span>
         </div>
 
-    </section>
-
-
-    <!-- DASHBOARD STATISTICS -->
-    <section class="dashboard-stats">
-
-        <div class="stat-card stat-blue">
-            <div class="stat-icon">📄</div>
-            <div>
-                <p>Total PDFs Uploaded</p>
-                <h2>{{ papers }}</h2>
-            </div>
+        <div class="stat-card">
+            <div class="stat-icon stat-cyan">📖</div>
+            <span class="stat-number">{{ units|length }}</span>
+            <span class="stat-label">Syllabus Units</span>
         </div>
 
-        <div class="stat-card stat-green">
-            <div class="stat-icon">❓</div>
-            <div>
-                <p>Total Questions Extracted</p>
-                <h2>{{ total }}</h2>
-            </div>
-        </div>
-
-        <div class="stat-card stat-purple">
-            <div class="stat-icon">📚</div>
-            <div>
-                <p>Total Units Covered</p>
-                <h2>10</h2>
-            </div>
-        </div>
-
-        <div class="stat-card stat-orange">
-            <div class="stat-icon">🕒</div>
-            <div>
-                <p>Last Updated</p>
-                <h2 style="font-size:18px;">
-                    {{ last_updated or 'Not Available' }}
-                </h2>
-            </div>
+        <div class="stat-card">
+            <div class="stat-icon stat-pink">⚡</div>
+            <span class="stat-number">{{ unclassified }}</span>
+            <span class="stat-label">Unclassified Questions</span>
         </div>
 
     </section>
 
 
-    <!-- SYLLABUS -->
-    <section class="syllabus-section">
+    <!-- TEN SYLLABUS UNITS -->
 
-        <div class="section-heading">
-            <p class="section-label">OFFICIAL UGC NET SYLLABUS</p>
-            <h2>UGC NET Computer Science Syllabus</h2>
+    <div class="section-heading">
+
+        <div>
+            <h2>Explore 10 Syllabus Units</h2>
+            <p>Select a unit to explore its previous-year questions</p>
         </div>
 
-        <div class="unit-grid">
+        <span class="section-tag">10 OFFICIAL UNITS</span>
 
-            {% for unit in units %}
+    </div>
 
-            <a href="{{ url_for('unit_detail', unit_no=loop.index) }}"
-               class="unit-card">
+    <section class="units-grid">
 
-                <div class="unit-icon">
-                    {{ ["🧩","🖥️","💻","🗄️","⚙️","🧪","🌳","📘","🌐","🤖"][loop.index0] }}
-                </div>
+        {% for unit in units %}
 
-                <div class="unit-info">
-                    <h3>Unit {{ loop.index }}</h3>
-                    <p>{{ unit.name }}</p>
-                </div>
+        <article class="unit-card">
 
-                <span class="question-count">
+            <div class="unit-top">
+
+                <span class="unit-number">
+                    {{ loop.index }}
+                </span>
+
+                <span class="unit-count">
                     {{ counts.get(loop.index, 0) }} Questions
                 </span>
 
-                <span class="unit-arrow">›</span>
+            </div>
 
+            <h3>{{ unit.name }}</h3>
+
+            <a href="{{ url_for('unit_detail', unit_no=loop.index) }}"
+               class="unit-explore">
+                Explore Unit <span>→</span>
             </a>
 
-            {% endfor %}
+        </article>
+
+        {% endfor %}
+
+    </section>
+
+
+    <!-- ADMIN DASHBOARD -->
+
+    {% if session.get('role') == 'admin' %}
+
+    <section class="role-panel">
+
+        <h2>⚙️ Admin Dashboard</h2>
+
+        <p>
+            Manage question papers and review the question collection
+            from your administrator dashboard.
+        </p>
+
+        <div class="role-actions">
+
+            <a href="{{ url_for('upload') }}" class="role-action">
+                <span>📤</span>
+                Upload Question Papers
+            </a>
+
+            <a href="{{ url_for('papers') }}" class="role-action">
+                <span>📚</span>
+                Manage Question Papers
+            </a>
+
+            <a href="{{ url_for('analysis') }}" class="role-action">
+                <span>📊</span>
+                Question Analysis
+            </a>
 
         </div>
 
     </section>
 
+    {% else %}
+
+
+    <!-- STUDENT DASHBOARD -->
+
+    <section class="role-panel">
+
+        <h2>🎓 Student Dashboard</h2>
+
+        <p>
+            Explore syllabus units, access previous-year papers
+            and practice Computer Science questions.
+        </p>
+
+        <div class="role-actions">
+
+            <a href="{{ url_for('papers') }}" class="role-action">
+                <span>📚</span>
+                View Question Papers
+            </a>
+
+            <a href="{{ url_for('analysis') }}" class="role-action">
+                <span>📊</span>
+                Explore Question Analysis
+            </a>
+
+            <a href="#"
+               class="role-action"
+               onclick="return false;">
+                <span>📖</span>
+                Explore Syllabus Units
+            </a>
+
+        </div>
+
+    </section>
+
+    {% endif %}
+
+
+    <!-- FOOTER -->
+
+    <footer class="footer">
+        © 2026 UGC NET Computer Science – Paper 2 Analyzer
+    </footer>
+
 </div>
 
-{% endblock %}
+</body>
+</html>

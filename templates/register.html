@@ -1,46 +1,490 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Registration</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Student Registration | UGC NET CS</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px 18px;
+            font-family: 'Inter', sans-serif;
+            background:
+                radial-gradient(circle at 10% 10%, #e2eaff, transparent 35%),
+                radial-gradient(circle at 90% 90%, #eee8ff, transparent 35%),
+                #f5f6ff;
+        }
+
+        .register-wrapper {
+            width: 100%;
+            max-width: 1050px;
+            min-height: 650px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            background: white;
+            border-radius: 28px;
+            overflow: hidden;
+            box-shadow: 0 25px 70px rgba(35, 47, 105, 0.13);
+        }
+
+        /* LEFT PANEL */
+
+        .welcome-panel {
+            position: relative;
+            overflow: hidden;
+            padding: 55px 45px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            color: white;
+            background: linear-gradient(145deg, #172554, #2563eb 55%, #7657e8);
+        }
+
+        .welcome-panel::before,
+        .welcome-panel::after {
+            content: "";
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.08);
+        }
+
+        .welcome-panel::before {
+            width: 300px;
+            height: 300px;
+            right: -130px;
+            top: -100px;
+        }
+
+        .welcome-panel::after {
+            width: 250px;
+            height: 250px;
+            left: -120px;
+            bottom: -100px;
+        }
+
+        .brand {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 19px;
+            font-weight: 800;
+        }
+
+        .brand-icon {
+            width: 48px;
+            height: 48px;
+            display: grid;
+            place-items: center;
+            border-radius: 15px;
+            background: rgba(255,255,255,0.18);
+            font-size: 25px;
+        }
+
+        .welcome-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .welcome-tag {
+            display: inline-block;
+            padding: 9px 15px;
+            margin-bottom: 22px;
+            border-radius: 30px;
+            background: rgba(255,255,255,0.15);
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .welcome-content h1 {
+            max-width: 400px;
+            margin-bottom: 20px;
+            font-family: 'Outfit', sans-serif;
+            font-size: clamp(34px, 4vw, 46px);
+            line-height: 1.15;
+        }
+
+        .welcome-content h1 span {
+            color: #ffb49f;
+        }
+
+        .welcome-content p {
+            max-width: 390px;
+            color: #dce6ff;
+            font-size: 15px;
+            line-height: 1.9;
+        }
+
+        .feature-list {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            gap: 15px;
+        }
+
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            color: #f0f4ff;
+            font-size: 14px;
+        }
+
+        .feature-icon {
+            width: 35px;
+            height: 35px;
+            display: grid;
+            place-items: center;
+            border-radius: 11px;
+            background: rgba(255,255,255,0.16);
+        }
+
+        /* RIGHT PANEL */
+
+        .form-panel {
+            padding: 55px 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .form-heading {
+            margin-bottom: 30px;
+        }
+
+        .form-heading .small-title {
+            margin-bottom: 12px;
+            color: #7657e8;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 1.8px;
+            text-transform: uppercase;
+        }
+
+        .form-heading h2 {
+            margin-bottom: 10px;
+            color: #172554;
+            font-family: 'Outfit', sans-serif;
+            font-size: 34px;
+            font-weight: 800;
+        }
+
+        .form-heading p {
+            color: #7b849e;
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        .flash-message {
+            padding: 13px 15px;
+            margin-bottom: 18px;
+            border: 1px solid #ffd5ca;
+            border-radius: 12px;
+            background: #fff3ef;
+            color: #b84d35;
+            font-size: 13px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 9px;
+            color: #26345a;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .input-wrap {
+            position: relative;
+        }
+
+        .input-wrap input {
+            width: 100%;
+            height: 53px;
+            padding: 0 16px;
+            border: 1.5px solid #e4e8f3;
+            border-radius: 13px;
+            outline: none;
+            background: #fafbff;
+            color: #172554;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            transition: 0.25s;
+        }
+
+        .input-wrap input:focus {
+            border-color: #2563eb;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(37,99,235,0.09);
+        }
+
+        .input-wrap input::placeholder {
+            color: #a5aec3;
+        }
+
+        .password-toggle {
+            position: absolute;
+            top: 50%;
+            right: 15px;
+            transform: translateY(-50%);
+            border: none;
+            background: transparent;
+            color: #7657e8;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .register-button {
+            width: 100%;
+            height: 54px;
+            margin-top: 7px;
+            border: none;
+            border-radius: 13px;
+            background: linear-gradient(100deg, #2563eb, #7657e8);
+            color: white;
+            font-family: 'Inter', sans-serif;
+            font-size: 15px;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 10px 22px rgba(75, 91, 210, 0.22);
+            transition: 0.25s;
+        }
+
+        .register-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 27px rgba(75, 91, 210, 0.3);
+        }
+
+        .login-link {
+            margin-top: 25px;
+            text-align: center;
+            color: #7b849e;
+            font-size: 13px;
+        }
+
+        .login-link a {
+            margin-left: 4px;
+            color: #2563eb;
+            font-weight: 800;
+            text-decoration: none;
+        }
+
+        .login-link a:hover {
+            color: #7657e8;
+            text-decoration: underline;
+        }
+
+        .bottom-note {
+            margin-top: 30px;
+            color: #a0a8bb;
+            font-size: 11px;
+            text-align: center;
+        }
+
+        @media (max-width: 800px) {
+            .register-wrapper {
+                max-width: 520px;
+                grid-template-columns: 1fr;
+            }
+
+            .welcome-panel {
+                min-height: 300px;
+                padding: 35px;
+            }
+
+            .welcome-content h1 {
+                font-size: 34px;
+            }
+
+            .feature-list {
+                margin-top: 28px;
+            }
+
+            .form-panel {
+                padding: 40px 30px;
+            }
+        }
+
+        @media (max-width: 450px) {
+            .welcome-panel,
+            .form-panel {
+                padding: 30px 22px;
+            }
+
+            .form-heading h2 {
+                font-size: 29px;
+            }
+        }
+    </style>
 </head>
+
 <body>
 
-<div class="container">
+<div class="register-wrapper">
 
-    <h1>Student Registration</h1>
+    <section class="welcome-panel">
 
-    {% with messages = get_flashed_messages() %}
-        {% for message in messages %}
-            <p>{{ message }}</p>
-        {% endfor %}
-    {% endwith %}
+        <div class="brand">
+            <div class="brand-icon">🎓</div>
+            <span>UGC NET CS</span>
+        </div>
 
-    <form method="POST">
+        <div class="welcome-content">
+            <span class="welcome-tag">YOUR LEARNING JOURNEY STARTS HERE</span>
 
-        <label>Username</label>
-        <input type="text" name="username"
-               placeholder="Create username" required>
+            <h1>
+                Create Your Account.
+                <span>Start Learning.</span>
+            </h1>
 
-        <label>Password</label>
-        <input type="password" name="password"
-               placeholder="Create password (8 characters minimum)" required>
+            <p>
+                Join the UGC NET Computer Science learning platform.
+                Explore subject-wise questions and prepare with confidence.
+            </p>
+        </div>
 
-        <label>Confirm Password</label>
-        <input type="password" name="confirm_password"
-               placeholder="Confirm password" required>
+        <div class="feature-list">
+            <div class="feature">
+                <span class="feature-icon">📚</span>
+                <span>10 Computer Science syllabus units</span>
+            </div>
 
-        <button type="submit">Register</button>
+            <div class="feature">
+                <span class="feature-icon">📄</span>
+                <span>Previous year question paper collection</span>
+            </div>
 
-    </form>
+            <div class="feature">
+                <span class="feature-icon">💡</span>
+                <span>Organized questions for focused learning</span>
+            </div>
+        </div>
 
-    <p>Already have an account?</p>
+    </section>
 
-    <a href="{{ url_for('login') }}">Login Here</a>
+    <section class="form-panel">
+
+        <div class="form-heading">
+            <p class="small-title">STUDENT REGISTRATION</p>
+            <h2>Create Account</h2>
+            <p>Enter your details below to create your student account.</p>
+        </div>
+
+        {% with messages = get_flashed_messages() %}
+            {% for message in messages %}
+                <div class="flash-message">{{ message }}</div>
+            {% endfor %}
+        {% endwith %}
+
+        <form method="POST">
+
+            <div class="form-group">
+                <label for="username">Username</label>
+                <div class="input-wrap">
+                    <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        placeholder="Create your username"
+                        autocomplete="username"
+                        required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <div class="input-wrap">
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Minimum 8 characters"
+                        minlength="8"
+                        autocomplete="new-password"
+                        required>
+                    <button
+                        type="button"
+                        class="password-toggle"
+                        onclick="togglePassword('password', this)">
+                        Show
+                    </button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="confirm_password">Confirm Password</label>
+                <div class="input-wrap">
+                    <input
+                        type="password"
+                        id="confirm_password"
+                        name="confirm_password"
+                        placeholder="Re-enter your password"
+                        minlength="8"
+                        autocomplete="new-password"
+                        required>
+                    <button
+                        type="button"
+                        class="password-toggle"
+                        onclick="togglePassword('confirm_password', this)">
+                        Show
+                    </button>
+                </div>
+            </div>
+
+            <button type="submit" class="register-button">
+                Create Student Account →
+            </button>
+
+        </form>
+
+        <div class="login-link">
+            Already have an account?
+            <a href="{{ url_for('login') }}">Login Here</a>
+        </div>
+
+        <p class="bottom-note">
+            © UGC NET Computer Science | Student Learning Portal
+        </p>
+
+    </section>
 
 </div>
+
+<script>
+    function togglePassword(inputId, button) {
+        const input = document.getElementById(inputId);
+
+        if (input.type === "password") {
+            input.type = "text";
+            button.textContent = "Hide";
+        } else {
+            input.type = "password";
+            button.textContent = "Show";
+        }
+    }
+</script>
 
 </body>
 </html>

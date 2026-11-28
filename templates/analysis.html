@@ -1,70 +1,574 @@
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Question Analysis</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
+{% extends "base.html" %}
 
-    <div class="container">
-        <h1>Question Paper Analysis</h1>
+{% block title %}Question Analysis | UGC NET CS{% endblock %}
 
-        <p>Analyze previous year UGC NET Computer Science Paper 2 questions.</p>
+{% block extra_css %}
+<style>
 
-        <form action="{{ url_for('analysis') }}" method="POST">
+/* ================= ANALYSIS PAGE ================= */
 
-            <label>Select Subject</label>
-            <select name="subject" required>
-                <option value="">Select Subject</option>
-                <option value="Computer Science">Computer Science</option>
-            </select>
+.analysis-page {
+    max-width: 1100px;
+    margin: auto;
+}
 
-            <br><br>
+/* Hero */
 
-            <label>Select Unit</label>
-            <select name="unit">
-                <option value="">All Units</option>
-                {% for unit in units %}
-                <option value="{{ loop.index }}">{{ unit.name }}</option>
-                {% endfor %}
-            </select>
+.analysis-hero {
+    padding: 35px;
+    border-radius: 24px;
+    margin-bottom: 30px;
 
-            <br><br>
+    background:
+        linear-gradient(
+            120deg,
+            rgba(49,139,255,0.23),
+            rgba(139,69,245,0.25),
+            rgba(240,68,184,0.17)
+        ),
+        #17102C !important;
 
-            <button type="submit">Analyze Questions</button>
+    border: 1px solid rgba(176,68,244,0.35);
+}
+
+.analysis-hero h1 {
+    font-size: clamp(28px, 4vw, 38px);
+    margin-bottom: 10px;
+}
+
+.analysis-hero p {
+    color: #B8AFCF;
+    font-size: 14px;
+}
+
+/* Filter Card */
+
+.filter-card {
+    padding: 28px;
+    border-radius: 21px;
+    margin-bottom: 30px;
+
+    background: linear-gradient(
+        145deg,
+        #21173D,
+        #17102C
+    ) !important;
+
+    border: 1px solid rgba(185,143,255,0.22);
+}
+
+.filter-card h2 {
+    font-size: 22px;
+    margin-bottom: 8px;
+}
+
+.filter-description {
+    color: #B8AFCF;
+    font-size: 13px;
+    margin-bottom: 23px;
+}
+
+/* Form */
+
+.analysis-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    align-items: end;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+}
+
+.filter-group label {
+    color: #F7F1FF;
+    font-weight: 700;
+    font-size: 13px;
+}
+
+.filter-group select {
+    padding: 13px 15px;
+    width: 100%;
+
+    background: #120D25 !important;
+    color: #F7F1FF !important;
+
+    border: 1px solid rgba(185,143,255,0.25);
+    border-radius: 12px;
+    outline: none;
+}
+
+.filter-group select:focus {
+    border-color: #8B45F5;
+    box-shadow: 0 0 0 3px rgba(139,69,245,0.15);
+}
+
+.analyze-button {
+    grid-column: 1 / -1;
+    width: 100%;
+    padding: 14px;
+
+    background: linear-gradient(
+        110deg,
+        #318BFF,
+        #8B45F5,
+        #F044B8
+    );
+
+    border: none;
+    border-radius: 12px;
+
+    color: white;
+    font-size: 14px;
+    font-weight: 800;
+
+    transition: 0.3s ease;
+}
+
+.analyze-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(139,69,245,0.3);
+}
+
+/* Results Heading */
+
+.results-heading {
+    margin: 30px 0 20px;
+}
+
+.results-heading h2 {
+    font-size: 25px;
+    margin-bottom: 7px;
+}
+
+.results-heading p {
+    color: #B8AFCF;
+    font-size: 13px;
+}
+
+/* Result Summary */
+
+.result-summary {
+    padding: 18px 22px;
+    margin-bottom: 22px;
+
+    background: rgba(49,139,255,0.10);
+    border: 1px solid rgba(49,139,255,0.25);
+    border-radius: 14px;
+
+    color: #25D9D0;
+    font-weight: 700;
+}
+
+/* Question Card */
+
+.analysis-question {
+    padding: 24px;
+    margin-bottom: 20px;
+
+    background: linear-gradient(
+        145deg,
+        #21173D,
+        #17102C
+    ) !important;
+
+    border: 1px solid rgba(185,143,255,0.2);
+    border-radius: 19px;
+
+    transition: 0.3s ease;
+}
+
+.analysis-question:hover {
+    border-color: rgba(139,69,245,0.6);
+    box-shadow: 0 0 22px rgba(139,69,245,0.15);
+}
+
+.question-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 17px;
+}
+
+.question-number {
+    padding: 7px 13px;
+    border-radius: 10px;
+
+    background: rgba(49,139,255,0.16);
+    color: #25D9D0;
+
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.question-text {
+    color: #F7F1FF !important;
+    font-size: 15px;
+    line-height: 1.8;
+    margin-bottom: 20px;
+    white-space: pre-line;
+}
+
+/* Options */
+
+.options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.option-item {
+    padding: 13px 15px;
+    border-radius: 11px;
+
+    background: rgba(44,32,80,0.65);
+    border: 1px solid rgba(185,143,255,0.17);
+
+    color: #D8CFEA;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.option-label {
+    color: #25D9D0;
+    font-weight: 800;
+    margin-right: 7px;
+}
+
+/* Answer */
+
+.answer-box {
+    padding: 13px 15px;
+    border-radius: 11px;
+
+    background: rgba(32,201,167,0.10);
+    border: 1px solid rgba(32,201,167,0.3);
+
+    color: #20C9A7;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+/* Empty State */
+
+.empty-state {
+    padding: 45px 20px;
+    text-align: center;
+
+    background: #17102C !important;
+    border: 1px dashed rgba(185,143,255,0.3);
+    border-radius: 18px;
+}
+
+.empty-icon {
+    font-size: 45px;
+    margin-bottom: 13px;
+}
+
+.empty-state h3 {
+    margin-bottom: 9px;
+}
+
+.empty-state p {
+    color: #B8AFCF;
+}
+
+/* Back Button */
+
+.back-section {
+    margin-top: 28px;
+}
+
+/* Responsive */
+
+@media (max-width: 650px) {
+
+    .analysis-hero {
+        padding: 24px;
+    }
+
+    .filter-card {
+        padding: 20px;
+    }
+
+    .analysis-form {
+        grid-template-columns: 1fr;
+    }
+
+    .analyze-button {
+        grid-column: 1;
+    }
+
+    .options-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .analysis-question {
+        padding: 18px;
+    }
+
+}
+
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="analysis-page">
+
+    <!-- HERO -->
+
+    <section class="analysis-hero">
+
+        <h1>
+            <span class="gradient-text">
+                ◈ Question Analysis
+            </span>
+        </h1>
+
+        <p>
+            Explore UGC NET Computer Science questions
+            by selecting a subject and syllabus unit.
+        </p>
+
+    </section>
+
+
+    <!-- FILTER FORM -->
+
+    <section class="filter-card">
+
+        <h2>🔍 Analyze Questions</h2>
+
+        <p class="filter-description">
+            Select the subject and unit to view available questions.
+        </p>
+
+
+        <form method="POST"
+              action="{{ url_for('analysis') }}"
+              class="analysis-form">
+
+
+            <!-- SUBJECT -->
+
+            <div class="filter-group">
+
+                <label for="subject">
+                    📚 Select Subject
+                </label>
+
+                <select name="subject"
+                        id="subject"
+                        required>
+
+                    <option value="Computer Science">
+                        Computer Science
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- UNIT -->
+
+            <div class="filter-group">
+
+                <label for="unit">
+                    🎯 Select Syllabus Unit
+                </label>
+
+                <select name="unit"
+                        id="unit"
+                        required>
+
+                    <option value="all"
+                        {% if selected_unit|string == 'all' %}
+                            selected
+                        {% endif %}>
+                        All Units
+                    </option>
+
+                    {% for unit in units %}
+
+                        <option
+                            value="{{ loop.index }}"
+                            {% if selected_unit|string == loop.index|string %}
+                                selected
+                            {% endif %}
+                        >
+                            Unit {{ loop.index }} - {{ unit }}
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <!-- SUBMIT -->
+
+            <button type="submit" class="analyze-button">
+                ✨ Analyze Questions
+            </button>
 
         </form>
 
-        <br>
-        <a href="{{ url_for('dashboard') }}">Back to Dashboard</a>
-        {% if analyzed %}
-    <hr>
-    <h2>Analysis Results</h2>
+    </section>
 
-    <p>Total Questions Found: {{ questions|length }}</p>
 
-    {% for q in questions %}
-        <div class="question-card">
-            <h3>Question {{ loop.index }}</h3>
+    <!-- RESULTS -->
 
-            <p>{{ q['question'] }}</p>
+    {% if analyzed %}
 
-            <p>A. {{ q['option_a'] }}</p>
-            <p>B. {{ q['option_b'] }}</p>
-            <p>C. {{ q['option_c'] }}</p>
-            <p>D. {{ q['option_d'] }}</p>
+        <section>
 
-            <p><strong>Correct Answer:</strong>
-                {{ q['correct_answer'] or 'Not Available' }}
-            </p>
-        </div>
-        <hr>
-    {% endfor %}
-{% endif %}
+            <div class="results-heading">
+
+                <h2>
+                    <span class="gradient-text">
+                        Analysis Results
+                    </span>
+                </h2>
+
+                <p>
+                    Questions matching your selected filters.
+                </p>
+
+            </div>
+
+
+            <div class="result-summary">
+
+                📊 Total Questions Found:
+                {{ questions|length }}
+
+            </div>
+
+
+            {% if questions %}
+
+                {% for q in questions %}
+
+                    <article class="analysis-question">
+
+                        <div class="question-header">
+
+                            <span class="question-number">
+                                Question {{ loop.index }}
+                            </span>
+
+                            <span class="badge">
+                                UGC NET CS
+                            </span>
+
+                        </div>
+
+
+                        <p class="question-text">
+                            {{ q['question'] }}
+                        </p>
+
+
+                        <!-- OPTIONS -->
+
+                        <div class="options-grid">
+
+                            {% if q['option_a'] %}
+                            <div class="option-item">
+                                <span class="option-label">A.</span>
+                                {{ q['option_a'] }}
+                            </div>
+                            {% endif %}
+
+                            {% if q['option_b'] %}
+                            <div class="option-item">
+                                <span class="option-label">B.</span>
+                                {{ q['option_b'] }}
+                            </div>
+                            {% endif %}
+
+                            {% if q['option_c'] %}
+                            <div class="option-item">
+                                <span class="option-label">C.</span>
+                                {{ q['option_c'] }}
+                            </div>
+                            {% endif %}
+
+                            {% if q['option_d'] %}
+                            <div class="option-item">
+                                <span class="option-label">D.</span>
+                                {{ q['option_d'] }}
+                            </div>
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- CORRECT ANSWER -->
+
+                        <div class="answer-box">
+
+                            ✓ Correct Answer:
+
+                            {% if q['correct_answer'] %}
+                                {{ q['correct_answer'] }}
+                            {% else %}
+                                Not Available
+                            {% endif %}
+
+                        </div>
+
+                    </article>
+
+                {% endfor %}
+
+            {% else %}
+
+                <div class="empty-state">
+
+                    <div class="empty-icon">
+                        📭
+                    </div>
+
+                    <h3>No Questions Found</h3>
+
+                    <p>
+                        No questions are available for the selected unit.
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+        </section>
+
+    {% endif %}
+
+
+    <!-- BACK BUTTON -->
+
+    <div class="back-section">
+
+        <a href="{{ url_for('dashboard') }}"
+           class="btn btn-secondary">
+
+            ← Back to Dashboard
+
+        </a>
+
     </div>
 
-</body>
-</html>
+</div>
+
+{% endblock %}

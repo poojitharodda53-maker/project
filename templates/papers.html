@@ -1,61 +1,458 @@
+
 {% extends "base.html" %}
+
+{% block title %}Previous Papers | UGC NET CS{% endblock %}
+
+{% block extra_css %}
+<style>
+
+/* ================= PAPERS ARCHIVE ================= */
+
+.papers-page {
+    width: 100%;
+}
+
+/* Hero */
+
+.papers-hero {
+    padding: 35px;
+    margin-bottom: 30px;
+    border-radius: 24px;
+
+    background:
+        linear-gradient(
+            120deg,
+            rgba(49,139,255,0.23),
+            rgba(139,69,245,0.25),
+            rgba(240,68,184,0.17)
+        ),
+        #17102C !important;
+
+    border: 1px solid rgba(176,68,244,0.35);
+}
+
+.papers-hero h1 {
+    font-size: clamp(28px, 4vw, 38px);
+    margin-bottom: 10px;
+}
+
+.papers-hero p {
+    color: #B8AFCF;
+    font-size: 14px;
+}
+
+/* Archive Statistics */
+
+.archive-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+    margin-bottom: 30px;
+}
+
+.archive-stat {
+    padding: 22px;
+    border-radius: 17px;
+
+    background: #21173D !important;
+    border: 1px solid rgba(185,143,255,0.2);
+}
+
+.archive-stat span {
+    color: #B8AFCF;
+    font-size: 13px;
+}
+
+.archive-stat h2 {
+    margin-top: 8px;
+    font-size: 30px;
+}
+
+/* Section Heading */
+
+.archive-heading {
+    margin: 30px 0 20px;
+}
+
+.archive-heading h2 {
+    font-size: 24px;
+    margin-bottom: 6px;
+}
+
+.archive-heading p {
+    color: #B8AFCF;
+    font-size: 13px;
+}
+
+/* Papers Grid */
+
+.papers-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+/* Paper Card */
+
+.paper-card {
+    padding: 23px;
+    border-radius: 19px;
+
+    background: linear-gradient(
+        145deg,
+        #21173D,
+        #17102C
+    ) !important;
+
+    border: 1px solid rgba(185,143,255,0.2);
+
+    transition: 0.3s ease;
+}
+
+.paper-card:hover {
+    transform: translateY(-5px);
+    border-color: #8B45F5;
+    box-shadow: 0 0 25px rgba(139,69,245,0.18);
+}
+
+.paper-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 17px;
+}
+
+.paper-icon {
+    width: 48px;
+    height: 48px;
+    display: grid;
+    place-items: center;
+
+    border-radius: 14px;
+
+    background: linear-gradient(
+        135deg,
+        #318BFF,
+        #8B45F5,
+        #F044B8
+    );
+
+    font-size: 23px;
+}
+
+.paper-year {
+    padding: 6px 12px;
+    border-radius: 20px;
+
+    background: rgba(37,217,208,0.12);
+    color: #25D9D0;
+
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.paper-card h3 {
+    font-size: 19px;
+    margin-bottom: 9px;
+}
+
+.paper-filename {
+    color: #B8AFCF;
+    font-size: 12px;
+    overflow-wrap: anywhere;
+    margin-bottom: 17px;
+}
+
+.paper-total {
+    padding: 12px 14px;
+    border-radius: 11px;
+
+    background: rgba(49,139,255,0.09);
+    border: 1px solid rgba(49,139,255,0.2);
+
+    color: #25D9D0;
+    font-size: 13px;
+    font-weight: 700;
+
+    margin-bottom: 18px;
+}
+
+/* Action Buttons */
+
+.paper-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.paper-actions a,
+.paper-actions button {
+    flex: 1;
+    min-width: 120px;
+    text-align: center;
+    padding: 11px 13px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.view-btn {
+    background: linear-gradient(
+        110deg,
+        #318BFF,
+        #8B45F5
+    );
+
+    color: white !important;
+}
+
+.delete-btn {
+    background: linear-gradient(
+        110deg,
+        #F04478,
+        #FF718A
+    );
+
+    color: white !important;
+    border: none;
+}
+
+/* Empty State */
+
+.empty-state {
+    padding: 50px 20px;
+    text-align: center;
+
+    background: #17102C !important;
+    border: 1px dashed rgba(185,143,255,0.3);
+    border-radius: 20px;
+}
+
+.empty-icon {
+    font-size: 48px;
+    margin-bottom: 15px;
+}
+
+.empty-state h3 {
+    margin-bottom: 10px;
+}
+
+.empty-state p {
+    color: #B8AFCF;
+    margin-bottom: 20px;
+}
+
+/* Bottom Button */
+
+.archive-bottom {
+    margin-top: 30px;
+}
+
+/* Responsive */
+
+@media (max-width: 700px) {
+
+    .papers-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .papers-hero {
+        padding: 24px;
+    }
+
+    .archive-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .paper-card {
+        padding: 19px;
+    }
+
+}
+
+</style>
+{% endblock %}
+
 
 {% block content %}
 
-<div class="container">
+<div class="papers-page">
 
-    <h1>Uploaded Question Papers</h1>
+    <!-- HERO -->
 
-    <hr>
+    <section class="papers-hero">
 
-    {% if papers %}
+        <h1>
+            <span class="gradient-text">
+                📚 Previous Question Papers
+            </span>
+        </h1>
 
-        {% for paper in papers %}
+        <p>
+            Explore uploaded UGC NET Computer Science
+            Paper 2 question papers and their extracted questions.
+        </p>
 
-            <div class="card">
+    </section>
 
-                <h3>
-                    {{ paper.exam_year }}
-                    - {{ paper.exam_session }}
-                </h3>
 
-                <p>
-                    <strong>File:</strong>
-                    {{ paper.filename }}
-                </p>
+    <!-- ARCHIVE STATISTICS -->
 
-                <p>
-                    <strong>Total Questions:</strong>
-                    {{ paper.total }}
-                </p>
+    <section class="archive-stats">
 
-                <a href="{{ url_for('paper_detail', paper_id=paper.id) }}">
-                    View Questions
-                </a>
+        <div class="archive-stat">
 
-                <form method="POST"
-                      action="{{ url_for('delete_paper', paper_id=paper.id) }}"
-                      onsubmit="return confirm('Are you sure you want to delete this paper?');">
+            <span>📄 Total Uploaded Papers</span>
 
-                    <button type="submit">
-                        Delete Paper
-                    </button>
+            <h2 class="gradient-text">
+                {{ papers|length }}
+            </h2>
 
-                </form>
+        </div>
+
+
+        <div class="archive-stat">
+
+            <span>🎯 Question Paper Archive</span>
+
+            <h2 class="gradient-text">
+                UGC NET CS
+            </h2>
+
+        </div>
+
+    </section>
+
+
+    <!-- PAPERS LIST -->
+
+    <section>
+
+        <div class="archive-heading">
+
+            <h2>Available Papers</h2>
+
+            <p>
+                Select a paper to view its extracted questions.
+            </p>
+
+        </div>
+
+
+        {% if papers %}
+
+            <div class="papers-grid">
+
+                {% for paper in papers %}
+
+                    <article class="paper-card">
+
+                        <div class="paper-card-top">
+
+                            <div class="paper-icon">
+                                📄
+                            </div>
+
+                            <span class="paper-year">
+                                {{ paper.exam_year }}
+                            </span>
+
+                        </div>
+
+
+                        <h3>
+                            UGC NET {{ paper.exam_session }}
+                        </h3>
+
+
+                        <p class="paper-filename">
+                            📁 {{ paper.filename }}
+                        </p>
+
+
+                        <div class="paper-total">
+                            Total Questions:
+                            {{ paper.total }}
+                        </div>
+
+
+                        <div class="paper-actions">
+
+                            <a
+                                href="{{ url_for('paper_detail', paper_id=paper.id) }}"
+                                class="view-btn">
+
+                                View Questions →
+
+                            </a>
+
+
+                            <form
+                                method="POST"
+                                action="{{ url_for('delete_paper', paper_id=paper.id) }}"
+                                onsubmit="return confirm('Are you sure you want to delete this paper?');"
+                                style="flex:1;">
+
+                                <button
+                                    type="submit"
+                                    class="delete-btn"
+                                    style="width:100%;">
+
+                                    Delete
+
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    </article>
+
+                {% endfor %}
 
             </div>
 
-            <br>
+        {% else %}
 
-        {% endfor %}
+            <div class="empty-state">
 
-    {% else %}
+                <div class="empty-icon">
+                    📭
+                </div>
 
-        <p>No question papers uploaded yet.</p>
+                <h3>No Papers Available</h3>
 
-    {% endif %}
+                <p>
+                    No question papers have been uploaded yet.
+                </p>
 
-    <a href="{{ url_for('home') }}">Back to Home</a>
+                <a href="{{ url_for('upload') }}"
+                   class="btn">
+
+                    Upload First PDF →
+
+                </a>
+
+            </div>
+
+        {% endif %}
+
+    </section>
+
+
+    <!-- BOTTOM ACTION -->
+
+    <div class="archive-bottom">
+
+        <a href="{{ url_for('home') }}"
+           class="btn btn-secondary">
+
+            ← Back to Dashboard
+
+        </a>
+
+    </div>
 
 </div>
 

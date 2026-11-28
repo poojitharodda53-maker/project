@@ -1,87 +1,545 @@
+
 {% extends "base.html" %}
 
+{% block title %}Paper Questions | UGC NET CS{% endblock %}
+
+{% block extra_css %}
+<style>
+
+/* ================= PAPER DETAILS PAGE ================= */
+
+.paper-page {
+    width: 100%;
+}
+
+/* Hero */
+
+.paper-hero {
+    padding: 32px;
+    margin-bottom: 28px;
+    border-radius: 24px;
+
+    background:
+        linear-gradient(
+            120deg,
+            rgba(49,139,255,0.23),
+            rgba(139,69,245,0.25),
+            rgba(240,68,184,0.16)
+        ),
+        #17102C !important;
+
+    border: 1px solid rgba(176,68,244,0.35);
+}
+
+.paper-hero h1 {
+    font-size: clamp(26px, 4vw, 37px);
+    margin-bottom: 10px;
+}
+
+.paper-hero p {
+    color: #B8AFCF;
+    font-size: 14px;
+}
+
+/* Paper Information */
+
+.paper-info {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.info-item {
+    padding: 18px;
+    border-radius: 15px;
+
+    background: #21173D !important;
+    border: 1px solid rgba(185,143,255,0.2);
+}
+
+.info-item span {
+    display: block;
+    color: #B8AFCF;
+    font-size: 12px;
+    margin-bottom: 6px;
+}
+
+.info-item strong {
+    color: #F7F1FF;
+    font-size: 16px;
+}
+
+/* Questions Heading */
+
+.questions-heading {
+    margin: 30px 0 20px;
+}
+
+.questions-heading h2 {
+    font-size: 24px;
+    margin-bottom: 6px;
+}
+
+.questions-heading p {
+    color: #B8AFCF;
+    font-size: 13px;
+}
+
+/* Question Card */
+
+.question-card {
+    padding: 24px;
+    margin-bottom: 22px;
+    border-radius: 19px;
+
+    background: linear-gradient(
+        145deg,
+        #21173D,
+        #17102C
+    ) !important;
+
+    border: 1px solid rgba(185,143,255,0.2);
+
+    transition: 0.3s ease;
+}
+
+.question-card:hover {
+    border-color: rgba(139,69,245,0.6);
+    box-shadow: 0 0 22px rgba(139,69,245,0.15);
+}
+
+.question-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 17px;
+}
+
+.question-number {
+    padding: 7px 13px;
+    border-radius: 10px;
+
+    background: rgba(49,139,255,0.16);
+    color: #25D9D0;
+
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.question-text {
+    color: #F7F1FF !important;
+    font-size: 15px;
+    line-height: 1.8;
+    margin-bottom: 20px;
+    white-space: pre-line;
+}
+
+/* Options */
+
+.options-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.option-item {
+    padding: 13px 15px;
+    border-radius: 12px;
+
+    background: rgba(44,32,80,0.65);
+    border: 1px solid rgba(185,143,255,0.17);
+
+    color: #D8CFEA;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.option-label {
+    color: #25D9D0;
+    font-weight: 800;
+    margin-right: 7px;
+}
+
+/* Correct Answer */
+
+.correct-answer {
+    padding: 12px 15px;
+    margin-bottom: 18px;
+
+    background: rgba(32,201,167,0.10);
+    border: 1px solid rgba(32,201,167,0.3);
+    border-radius: 11px;
+
+    color: #20C9A7;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+/* Unit Details */
+
+.unit-details {
+    padding: 15px;
+    margin-bottom: 18px;
+
+    background: rgba(49,139,255,0.08);
+    border: 1px solid rgba(49,139,255,0.22);
+    border-radius: 12px;
+}
+
+.unit-details p {
+    color: #B8AFCF;
+    font-size: 13px;
+    margin-bottom: 5px;
+}
+
+.unit-details strong {
+    color: #25D9D0;
+}
+
+/* Reassign Form */
+
+.reassign-form {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+
+    padding-top: 17px;
+    border-top: 1px solid rgba(185,143,255,0.15);
+}
+
+.reassign-form label {
+    margin: 0;
+    color: #B8AFCF;
+    font-size: 13px;
+}
+
+.reassign-form select {
+    flex: 1;
+    min-width: 190px;
+    padding: 10px;
+    background: #120D25 !important;
+    color: #F7F1FF !important;
+}
+
+.reassign-form button {
+    padding: 11px 17px;
+}
+
+/* Empty State */
+
+.empty-state {
+    padding: 45px 20px;
+    text-align: center;
+
+    background: #17102C !important;
+    border: 1px dashed rgba(185,143,255,0.3);
+    border-radius: 18px;
+}
+
+.empty-state-icon {
+    font-size: 45px;
+    margin-bottom: 15px;
+}
+
+.empty-state h3 {
+    margin-bottom: 8px;
+}
+
+.empty-state p {
+    color: #B8AFCF;
+}
+
+/* Back Button */
+
+.back-section {
+    margin-top: 30px;
+}
+
+/* Responsive */
+
+@media (max-width: 650px) {
+
+    .paper-hero {
+        padding: 23px;
+    }
+
+    .paper-info {
+        grid-template-columns: 1fr;
+    }
+
+    .question-card {
+        padding: 18px;
+    }
+
+    .options-list {
+        grid-template-columns: 1fr;
+    }
+
+    .reassign-form {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .reassign-form select,
+    .reassign-form button {
+        width: 100%;
+    }
+
+}
+
+</style>
+{% endblock %}
+
+
 {% block content %}
-<div class="container">
 
-    <h1>Question Paper Details</h1>
+<div class="paper-page">
 
-    <h3>Exam Year: {{ paper.exam_year or "Not Available" }}</h3>
-    <h3>Exam Session: {{ paper.exam_session or "Not Available" }}</h3>
+    <!-- PAPER HERO -->
 
-    <hr>
+    <section class="paper-hero">
 
-    <h2>Extracted Questions</h2>
+        <h1>
+            <span class="gradient-text">
+                📄 Question Paper Details
+            </span>
+        </h1>
 
-    {% if questions %}
+        <p>
+            View extracted questions, answer options,
+            syllabus classification and confidence details.
+        </p>
 
-        {% for q in questions %}
+    </section>
 
-            <div class="card">
 
-                <h4>Question {{ loop.index }} 
-                    (Original Q.No: {{ q.original_no }})
-                </h4>
+    <!-- PAPER INFORMATION -->
 
-                <p>{{ q.question }}</p>
+    <section class="paper-info">
 
-                <h5>Options:</h5>
+        <div class="info-item">
 
-                {% if q.option_a or q.option_b or q.option_c or q.option_d %}
+            <span>📅 Examination Year</span>
 
-                    <p><strong>A.</strong> {{ q.option_a }}</p>
-                    <p><strong>B.</strong> {{ q.option_b }}</p>
-                    <p><strong>C.</strong> {{ q.option_c }}</p>
-                    <p><strong>D.</strong> {{ q.option_d }}</p>
+            <strong>
+                {{ paper.exam_year }}
+            </strong>
 
-                {% else %}
+        </div>
 
-                    <p>Options not extracted for this question.</p>
 
-                {% endif %}
+        <div class="info-item">
 
-                <hr>
+            <span>📝 Examination Session</span>
+
+            <strong>
+                {{ paper.exam_session }}
+            </strong>
+
+        </div>
+
+    </section>
+
+
+    <!-- QUESTIONS -->
+
+    <section>
+
+        <div class="questions-heading">
+
+            <h2>
+                <span class="gradient-text">
+                    Extracted Questions
+                </span>
+            </h2>
+
+            <p>
+                Questions classified from the selected paper.
+            </p>
+
+        </div>
+
+
+        {% if questions %}
+
+            {% for q in questions %}
+
+                <article class="question-card">
+
+                    <!-- Question Header -->
+
+                    <div class="question-top">
+
+                        <span class="question-number">
+                            Question {{ q.original_no }}
+                        </span>
+
+                        <span class="badge">
+                            Unit {{ q.unit_no }}
+                        </span>
+
+                    </div>
+
+
+                    <!-- Question Text -->
+
+                    <p class="question-text">
+                        {{ q.question }}
+                    </p>
+
+
+                    <!-- Options -->
+
+                    <div class="options-list">
+
+                        {% if q.option_a %}
+                        <div class="option-item">
+                            <span class="option-label">A.</span>
+                            {{ q.option_a }}
+                        </div>
+                        {% endif %}
+
+                        {% if q.option_b %}
+                        <div class="option-item">
+                            <span class="option-label">B.</span>
+                            {{ q.option_b }}
+                        </div>
+                        {% endif %}
+
+                        {% if q.option_c %}
+                        <div class="option-item">
+                            <span class="option-label">C.</span>
+                            {{ q.option_c }}
+                        </div>
+                        {% endif %}
+
+                        {% if q.option_d %}
+                        <div class="option-item">
+                            <span class="option-label">D.</span>
+                            {{ q.option_d }}
+                        </div>
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- Correct Answer -->
+
+                    {% if q.correct_answer %}
+
+                        <div class="correct-answer">
+                            ✓ Correct Answer:
+                            {{ q.correct_answer }}
+                        </div>
+
+                    {% else %}
+
+                        <div class="correct-answer"
+                             style="color:#F7C66A;">
+                            ℹ Correct Answer: Not Available
+                        </div>
+
+                    {% endif %}
+
+
+                    <!-- Unit Classification -->
+
+                    <div class="unit-details">
+
+                        <p>
+                            <strong>Unit Number:</strong>
+                            {{ q.unit_no }}
+                        </p>
+
+                        <p>
+                            <strong>Unit Name:</strong>
+                            {{ q.unit_name }}
+                        </p>
+
+                        <p>
+                            <strong>Confidence:</strong>
+                            {{ q.confidence }}
+                        </p>
+
+                    </div>
+
+
+                    <!-- Reassign Unit -->
+
+                    <form
+                        method="POST"
+                        action="{{ url_for('reassign', question_id=q.id) }}"
+                        class="reassign-form">
+
+                        <label>
+                            Change Unit:
+                        </label>
+
+                        <select name="unit_no" required>
+
+                            {% for unit in units %}
+
+                                <option
+                                    value="{{ unit[0] }}"
+                                    {% if unit[0]|string == q.unit_no|string %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    Unit {{ unit[0] }} - {{ unit[1] }}
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                        <button type="submit">
+                            Update Unit
+                        </button>
+
+                    </form>
+
+                </article>
+
+            {% endfor %}
+
+        {% else %}
+
+            <div class="empty-state">
+
+                <div class="empty-state-icon">
+                    📭
+                </div>
+
+                <h3>No Questions Found</h3>
 
                 <p>
-                    <strong>Unit:</strong>
-                    {{ q.unit_no }} - {{ q.unit_name }}
+                    No extracted questions are available
+                    in this paper.
                 </p>
-
-                <p>
-                    <strong>Confidence:</strong>
-                    {{ q.confidence }}%
-                </p>
-
-                <form method="POST"
-                      action="{{ url_for('reassign', question_id=q.id) }}">
-
-                    <label><strong>Change Unit:</strong></label>
-
-                    <select name="unit_no">
-                        {% for unit in units %}
-                            <option value="{{ unit.number }}"
-                                {% if unit.number == q.unit_no %}selected{% endif %}>
-                                Unit {{ unit.number }} - {{ unit.name }}
-                            </option>
-                        {% endfor %}
-                    </select>
-
-                    <button type="submit">Update Unit</button>
-
-                </form>
 
             </div>
 
-        {% endfor %}
+        {% endif %}
 
-    {% else %}
+    </section>
 
-        <p>No questions found in this paper.</p>
 
-    {% endif %}
+    <!-- BACK BUTTON -->
 
-    <br>
+    <div class="back-section">
 
-    <a href="{{ url_for('home') }}">Back to Home</a>
+        <a href="{{ url_for('home') }}"
+           class="btn btn-secondary">
+            ← Back to Dashboard
+        </a>
+
+    </div>
 
 </div>
+
 {% endblock %}

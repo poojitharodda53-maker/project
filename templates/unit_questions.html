@@ -1,85 +1,411 @@
 
 {% extends "base.html" %}
 
+{% block title %}{{ unit.name }} Questions | UGC NET CS{% endblock %}
+
+{% block extra_css %}
+<style>
+    .questions-page {
+        max-width: 1150px;
+        margin: 0 auto;
+        padding: 25px 15px 55px;
+    }
+
+    .question-hero {
+        position: relative;
+        overflow: hidden;
+        padding: 38px;
+        border-radius: 25px;
+        background: linear-gradient(120deg, #172554, #2563EB, #7657E8);
+        color: white;
+        margin-bottom: 25px;
+        box-shadow: 0 12px 30px rgba(37, 99, 235, 0.18);
+    }
+
+    .question-hero::after {
+        content: "✦";
+        position: absolute;
+        right: 55px;
+        top: 5px;
+        font-size: 125px;
+        opacity: 0.12;
+    }
+
+    .question-hero .eyebrow {
+        font-size: 13px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        opacity: 0.8;
+        font-weight: 700;
+    }
+
+    .question-hero h1 {
+        font-size: clamp(25px, 4vw, 36px);
+        font-weight: 800;
+        margin: 12px 0;
+        color: white;
+    }
+
+    .question-hero p {
+        color: #E0E7FF;
+        margin: 7px 0;
+        font-size: 15px;
+    }
+
+    .question-stats {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+        margin-bottom: 30px;
+    }
+
+    .question-stat {
+        background: white;
+        padding: 22px;
+        border-radius: 18px;
+        border: 1px solid #E5E7EB;
+        box-shadow: 0 5px 18px rgba(30, 41, 59, 0.05);
+    }
+
+    .question-stat span {
+        display: block;
+        color: #64748B;
+        font-size: 13px;
+        margin-bottom: 8px;
+    }
+
+    .question-stat strong {
+        color: #172554;
+        font-size: 27px;
+        font-weight: 800;
+    }
+
+    .section-heading {
+        margin: 32px 0 20px;
+    }
+
+    .section-heading h2 {
+        color: #172554;
+        font-size: 25px;
+        font-weight: 800;
+        margin-bottom: 6px;
+    }
+
+    .section-heading p {
+        color: #64748B;
+        font-size: 14px;
+    }
+
+    .question-card {
+        background: #FFFFFF;
+        border: 1px solid #E5E7EB;
+        border-radius: 20px;
+        padding: 25px;
+        margin-bottom: 22px;
+        box-shadow: 0 7px 22px rgba(30, 41, 59, 0.055);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .question-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 28px rgba(37, 99, 235, 0.10);
+    }
+
+    .question-card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 18px;
+        flex-wrap: wrap;
+    }
+
+    .question-number {
+        background: #EEF2FF;
+        color: #4338CA;
+        padding: 8px 15px;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 800;
+    }
+
+    .question-label {
+        color: #94A3B8;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .question-text {
+        color: #1E293B;
+        font-size: 17px;
+        line-height: 1.8;
+        font-weight: 600;
+        margin-bottom: 22px;
+        white-space: pre-line;
+        overflow-wrap: anywhere;
+    }
+
+    .options-heading {
+        color: #475569;
+        font-size: 13px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 12px;
+    }
+
+    .options-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    .option-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        background: #F8FAFC;
+        border: 1px solid #E2E8F0;
+        padding: 14px;
+        border-radius: 13px;
+        color: #334155;
+        line-height: 1.6;
+        overflow-wrap: anywhere;
+    }
+
+    .option-letter {
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 29px;
+        height: 29px;
+        border-radius: 9px;
+        background: #E0E7FF;
+        color: #3730A3;
+        font-weight: 800;
+        font-size: 13px;
+    }
+
+    .answer-area {
+        margin-top: 20px;
+        padding: 15px 18px;
+        border-radius: 13px;
+        background: #ECFDF5;
+        border: 1px solid #BBF7D0;
+        color: #166534;
+        line-height: 1.6;
+    }
+
+    .answer-area strong {
+        font-size: 14px;
+    }
+
+    .answer-unavailable {
+        background: #F8FAFC;
+        border-color: #E2E8F0;
+        color: #64748B;
+    }
+
+    .empty-questions {
+        text-align: center;
+        padding: 55px 20px;
+        border: 1px dashed #CBD5E1;
+        border-radius: 20px;
+        background: white;
+    }
+
+    .empty-questions .empty-icon {
+        font-size: 45px;
+        margin-bottom: 15px;
+    }
+
+    .empty-questions h3 {
+        color: #172554;
+        margin-bottom: 8px;
+    }
+
+    .empty-questions p {
+        color: #64748B;
+    }
+
+    .page-navigation {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 35px;
+    }
+
+    .page-navigation a {
+        display: inline-block;
+        padding: 12px 20px;
+        border-radius: 12px;
+        background: #EEF2FF;
+        color: #3730A3;
+        font-weight: 700;
+        text-decoration: none;
+        transition: 0.2s;
+    }
+
+    .page-navigation a:hover {
+        background: #2563EB;
+        color: white;
+    }
+
+    @media (max-width: 650px) {
+        .question-hero {
+            padding: 27px 22px;
+        }
+
+        .question-stats {
+            grid-template-columns: 1fr;
+        }
+
+        .options-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .question-card {
+            padding: 19px;
+        }
+
+        .question-text {
+            font-size: 15px;
+        }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 
-<div class="container">
+<div class="questions-page">
 
-    <h1>{{ unit.name }}</h1>
+    <section class="question-hero">
+        <div class="eyebrow">UGC NET · Computer Science · Paper 2</div>
 
-    <p><strong>Exam Year:</strong>
-        {{ paper.exam_year or "Year Not Available" }}
-    </p>
+        <h1>{{ unit.name }}</h1>
 
-    <p><strong>Total Questions:</strong> {{ total }}</p>
+        <p>
+            📚 Exam Year:
+            <strong>{{ paper.exam_year or "Year Not Available" }}</strong>
+        </p>
 
-    <hr>
+        <p>Explore the questions from your selected question paper.</p>
+    </section>
 
-    <h2>Questions - {{ paper.exam_year or "Previous Paper" }}</h2>
+    <section class="question-stats">
+
+        <div class="question-stat">
+            <span>📝 Total Questions</span>
+            <strong>{{ total }}</strong>
+        </div>
+
+        <div class="question-stat">
+            <span>📅 Selected Exam Year</span>
+            <strong>{{ paper.exam_year or "N/A" }}</strong>
+        </div>
+
+    </section>
+
+    <div class="section-heading">
+        <h2>Question Collection</h2>
+        <p>Read each question and review its available answer options.</p>
+    </div>
 
     {% if questions %}
 
         {% for q in questions %}
 
-            <div class="card">
+            <article class="question-card">
 
-                <h3>Question {{ q.original_no or loop.index }}</h3>
+                <div class="question-card-header">
+                    <span class="question-number">
+                        Question {{ q.original_no or loop.index }}
+                    </span>
 
-                <p>{{ q.question or "Question text not available" }}</p>
+                    <span class="question-label">
+                        UGC NET Paper 2
+                    </span>
+                </div>
 
-                <hr>
+                <div class="question-text">
+                    {{ q.question or "Question text not available" }}
+                </div>
 
-                <h4>Options:</h4>
+                <div class="options-heading">Answer Options</div>
 
-                {% if q.option_a %}
-                    <p>A) {{ q.option_a }}</p>
-                {% endif %}
+                <div class="options-grid">
 
-                {% if q.option_b %}
-                    <p>B) {{ q.option_b }}</p>
-                {% endif %}
+                    {% if q.option_a %}
+                    <div class="option-item">
+                        <span class="option-letter">A</span>
+                        <span>{{ q.option_a }}</span>
+                    </div>
+                    {% endif %}
 
-                {% if q.option_c %}
-                    <p>C) {{ q.option_c }}</p>
-                {% endif %}
+                    {% if q.option_b %}
+                    <div class="option-item">
+                        <span class="option-letter">B</span>
+                        <span>{{ q.option_b }}</span>
+                    </div>
+                    {% endif %}
 
-                {% if q.option_d %}
-                    <p>D) {{ q.option_d }}</p>
-                {% endif %}
+                    {% if q.option_c %}
+                    <div class="option-item">
+                        <span class="option-letter">C</span>
+                        <span>{{ q.option_c }}</span>
+                    </div>
+                    {% endif %}
 
-                <hr>
+                    {% if q.option_d %}
+                    <div class="option-item">
+                        <span class="option-letter">D</span>
+                        <span>{{ q.option_d }}</span>
+                    </div>
+                    {% endif %}
+
+                </div>
 
                 {% if q.correct_answer %}
-                    <p style="color: green; font-weight: bold;">
-                        Correct Answer: {{ q.correct_answer }}
-                    </p>
+                    <div class="answer-area">
+                        <strong>✓ Correct Answer:</strong>
+                        {{ q.correct_answer }}
+                    </div>
                 {% else %}
-                    <p style="color: gray;">
-                        Correct Answer: Not Available
-                    </p>
+                    <div class="answer-area answer-unavailable">
+                        <strong>Correct Answer:</strong>
+                        Not Available
+                    </div>
                 {% endif %}
 
-            </div>
-
-            <br>
+            </article>
 
         {% endfor %}
 
     {% else %}
 
-        <p>No questions found in this unit.</p>
+        <div class="empty-questions">
+            <div class="empty-icon">📂</div>
+            <h3>No Questions Found</h3>
+            <p>There are currently no questions available in this unit and paper.</p>
+        </div>
 
     {% endif %}
 
-    <hr>
+    <div class="page-navigation">
 
-    <a href="{{ url_for('unit_detail', unit_no=unit_no) }}">
-        Back to {{ unit.name }}
-    </a>
+        <a href="{{ url_for('unit_detail', unit_no=unit_no) }}">
+            ← Back to Unit
+        </a>
 
-    <br><br>
+        <a href="{{ url_for('home') }}">
+            🏠 Back to Dashboard
+        </a>
 
-    <a href="{{ url_for('home') }}">Back to Home</a>
+    </div>
 
 </div>
 

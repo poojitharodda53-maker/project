@@ -1,454 +1,838 @@
-/* ==============================
-   GLOBAL
-============================== */
+
+/* =========================================================
+   UGC NET COMPUTER SCIENCE PAPER 2 ANALYZER
+   GALAXY NEON - PREMIUM DESIGN SYSTEM
+   Theme: Blue + Purple + Pink + Cyan + Teal + Coral
+========================================================= */
+
+/* ---------- 1. ROOT COLORS ---------- */
+
+:root {
+    --bg: #0B0719;
+    --bg-secondary: #100B22;
+
+    --surface: #17102C;
+    --surface-2: #21173D;
+    --surface-3: #2C2050;
+
+    --blue: #318BFF;
+    --blue-dark: #1D65D8;
+    --purple: #8B45F5;
+    --violet: #B044F4;
+    --pink: #F044B8;
+    --cyan: #25D9D0;
+    --teal: #20C9A7;
+    --coral: #FF718A;
+    --gold: #F7C66A;
+
+    --text: #F7F1FF;
+    --muted: #B8AFCF;
+    --muted-2: #8D82AA;
+
+    --border: rgba(185, 143, 255, 0.18);
+
+    --gradient-main:
+        linear-gradient(120deg, #318BFF, #8B45F5, #F044B8);
+
+    --gradient-blue:
+        linear-gradient(120deg, #318BFF, #25D9D0);
+
+    --gradient-purple:
+        linear-gradient(120deg, #8B45F5, #F044B8);
+
+    --gradient-sunset:
+        linear-gradient(120deg, #F044B8, #FF718A, #F7C66A);
+
+    --shadow:
+        0 15px 40px rgba(0, 0, 0, 0.35);
+
+    --glow-blue:
+        0 0 25px rgba(49, 139, 255, 0.20);
+
+    --glow-purple:
+        0 0 25px rgba(139, 69, 245, 0.20);
+
+    --radius: 20px;
+}
+
+/* ---------- 2. RESET ---------- */
 
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: Arial, sans-serif;
+}
+
+html {
+    scroll-behavior: smooth;
 }
 
 body {
-    background: #f4f6fc;
     min-height: 100vh;
-    color: #172554;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    background:
+        radial-gradient(
+            circle at 10% 10%,
+            rgba(49, 139, 255, 0.12),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 90% 20%,
+            rgba(176, 68, 244, 0.13),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 50% 100%,
+            rgba(240, 68, 184, 0.08),
+            transparent 35%
+        ),
+        var(--bg) !important;
+
+    color: var(--text) !important;
+    line-height: 1.6;
+    overflow-x: hidden;
 }
 
 a {
-    text-decoration: none;
     color: inherit;
+    text-decoration: none;
+}
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
 }
 
 button {
     cursor: pointer;
 }
 
-/* ==============================
-   NAVIGATION BAR
-============================== */
+img {
+    max-width: 100%;
+}
 
-.navbar,
-nav {
-    background: linear-gradient(100deg, #111b75, #173da8);
-    color: white;
-    min-height: 68px;
-    padding: 12px 25px;
+/* ---------- 3. SELECTION ---------- */
+
+::selection {
+    background: rgba(176, 68, 244, 0.55);
+    color: #ffffff;
+}
+
+/* ---------- 4. NAVBAR ---------- */
+
+.navbar {
+    width: 100%;
+    min-height: 78px;
+    padding: 14px 5%;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 12px;
-    box-shadow: 0 3px 12px rgba(20, 35, 100, 0.2);
+    gap: 20px;
+
+    background: rgba(17, 10, 36, 0.92) !important;
+    border-bottom: 1px solid var(--border);
+
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.20);
 }
 
-.navbar a,
-nav a {
-    color: white;
-    background: transparent;
-    padding: 10px 12px;
-    margin: 0;
-    border-radius: 7px;
-    font-size: 14px;
-}
-
-.navbar a:hover,
-nav a:hover {
-    background: rgba(255,255,255,0.16);
-}
-
-/* ==============================
-   MAIN CONTAINER
-============================== */
-
-.container,
-.dashboard-container {
-    width: 100%;
-    max-width: 1500px;
-    margin: 20px auto;
-    padding: 15px;
-    background: transparent;
-    border-radius: 0;
-    box-shadow: none;
-}
-
-/* ==============================
-   WELCOME BANNER
-============================== */
-
-.welcome-banner {
-    background: linear-gradient(110deg, #e0e7ff, #ede9fe, #f5eaff);
-    border-radius: 15px;
-    padding: 30px;
-    margin-bottom: 18px;
+.brand {
     display: flex;
     align-items: center;
-    gap: 25px;
-    min-height: 155px;
-    border: 1px solid #dbe4ff;
+    gap: 12px;
+
+    color: var(--text) !important;
+    font-size: 19px;
+    font-weight: 800;
+    letter-spacing: 0.3px;
 }
 
-.welcome-banner h1 {
-    text-align: left;
-    color: #172b83;
-    font-size: 27px;
-    margin-bottom: 10px;
+.brand small {
+    display: block;
+    color: var(--cyan);
+    font-size: 9px;
+    letter-spacing: 2px;
+    font-weight: 700;
 }
 
-.welcome-banner p {
-    color: #26345e;
-    font-size: 15px;
-}
+.brand-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 15px;
 
-.welcome-label,
-.section-label {
-    color: #5365b8;
-    font-weight: bold;
-    font-size: 12px;
-    letter-spacing: 1px;
-}
-
-/* ==============================
-   DASHBOARD STATISTICS
-============================== */
-
-.dashboard-stats {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 14px;
-    margin: 18px 0 25px;
+    place-items: center;
+
+    background: var(--gradient-main);
+    box-shadow: var(--glow-purple);
+
+    font-size: 23px;
 }
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.nav-links a {
+    padding: 9px 14px;
+    border-radius: 11px;
+
+    color: var(--muted) !important;
+    font-size: 13px;
+    font-weight: 600;
+
+    transition: 0.3s ease;
+}
+
+.nav-links a:hover {
+    color: #ffffff !important;
+    background: rgba(139, 69, 245, 0.18);
+    box-shadow: var(--glow-purple);
+    transform: translateY(-2px);
+}
+
+.nav-links .nav-upload {
+    background: var(--gradient-main);
+    color: #ffffff !important;
+}
+
+/* ---------- 5. MAIN CONTAINER ---------- */
+
+.main-container {
+    width: min(1200px, 92%);
+    min-height: 70vh;
+    margin: 0 auto;
+    padding: 35px 0 60px;
+}
+
+.dashboard-container,
+.page-container,
+.analysis-page,
+.upload-page,
+.unit-page {
+    width: 100%;
+    margin: 0 auto;
+}
+
+/* ---------- 6. HEADINGS ---------- */
+
+h1, h2, h3, h4, h5, h6 {
+    color: var(--text) !important;
+    font-family: 'Outfit', 'Inter', sans-serif;
+    line-height: 1.25;
+}
+
+h1 {
+    font-size: clamp(28px, 4vw, 43px);
+    font-weight: 800;
+}
+
+h2 {
+    font-size: clamp(23px, 3vw, 32px);
+    font-weight: 750;
+}
+
+h3 {
+    font-size: 21px;
+    font-weight: 700;
+}
+
+p {
+    color: var(--muted);
+}
+
+/* ---------- 7. GRADIENT TEXT ---------- */
+
+.gradient-text {
+    background: var(--gradient-main);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent !important;
+}
+
+.gradient-blue-text {
+    background: var(--gradient-blue);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent !important;
+}
+
+/* ---------- 8. COMMON CARDS ---------- */
+
+.card,
+.stat-card,
+.unit-card,
+.paper-card,
+.question-card,
+.feature-card,
+.info-card,
+.panel,
+.analysis-card {
+    background:
+        linear-gradient(
+            145deg,
+            rgba(39, 27, 69, 0.96),
+            rgba(23, 16, 44, 0.98)
+        ) !important;
+
+    color: var(--text) !important;
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+
+    box-shadow: var(--shadow);
+
+    transition:
+        transform 0.3s ease,
+        border-color 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+.card:hover,
+.stat-card:hover,
+.unit-card:hover,
+.paper-card:hover,
+.feature-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(176, 68, 244, 0.55);
+    box-shadow: var(--glow-purple);
+}
+
+.card {
+    padding: 25px;
+}
+
+/* ---------- 9. HERO SECTIONS ---------- */
+
+.hero,
+.welcome-banner,
+.upload-hero,
+.analysis-hero,
+.unit-welcome {
+    position: relative;
+    overflow: hidden;
+
+    padding: 38px;
+    border-radius: 26px;
+
+    background:
+        linear-gradient(
+            120deg,
+            rgba(49, 139, 255, 0.24),
+            rgba(139, 69, 245, 0.25),
+            rgba(240, 68, 184, 0.18)
+        ),
+        var(--surface) !important;
+
+    border: 1px solid rgba(176, 68, 244, 0.35);
+    box-shadow: var(--shadow);
+}
+
+.hero::after,
+.welcome-banner::after,
+.upload-hero::after,
+.analysis-hero::after {
+    content: "";
+    position: absolute;
+
+    width: 220px;
+    height: 220px;
+
+    right: -70px;
+    top: -90px;
+
+    background: rgba(49, 139, 255, 0.15);
+    filter: blur(45px);
+    border-radius: 50%;
+
+    pointer-events: none;
+}
+
+.hero p,
+.welcome-banner p,
+.upload-hero p,
+.analysis-hero p {
+    color: var(--muted);
+}
+
+/* ---------- 10. STAT CARDS ---------- */
 
 .stat-card {
-    background: white;
-    border: 1px solid #e0e7ff;
-    border-radius: 12px;
-    padding: 18px;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    min-height: 100px;
-    box-shadow: 0 3px 12px rgba(30, 50, 100, 0.05);
+    padding: 23px;
+    position: relative;
+    overflow: hidden;
 }
 
-.stat-card p {
-    font-size: 13px;
-    color: #475569;
-    margin-bottom: 5px;
+.stat-card h2,
+.stat-card .stat-number {
+    font-size: 34px;
+    font-weight: 800;
+    margin: 8px 0;
 }
 
-.stat-card h2 {
-    font-size: 25px;
-    margin: 0;
-    color: #172b83;
+.stat-card:nth-child(4n+1) {
+    border-top: 3px solid var(--blue);
 }
 
-.stat-icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 25px;
-    background: #e0e7ff;
+.stat-card:nth-child(4n+2) {
+    border-top: 3px solid var(--purple);
 }
 
-.stat-blue .stat-icon {
-    background: #dbeafe;
+.stat-card:nth-child(4n+3) {
+    border-top: 3px solid var(--pink);
 }
 
-.stat-purple .stat-icon {
-    background: #ede9fe;
+.stat-card:nth-child(4n+4) {
+    border-top: 3px solid var(--cyan);
 }
 
-.stat-green .stat-icon {
-    background: #d1fae5;
-}
-
-.stat-orange .stat-icon {
-    background: #ffedd5;
-}
-
-/* ==============================
-   SECTION HEADINGS
-============================== */
-
-.syllabus-section {
-    margin-top: 20px;
-}
-
-.section-heading {
-    margin-bottom: 18px;
-}
-
-.section-heading h2 {
-    color: #172554;
-    font-size: 21px;
-    margin: 5px 0;
-}
-
-.section-heading p {
-    color: #64748b;
-    font-size: 14px;
-}
-
-/* ==============================
-   UNIT CARDS
-============================== */
-
-.unit-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 14px;
-}
-
-.unit-card {
-    background: linear-gradient(110deg, #263ac5, #0753b9);
-    color: white;
-    padding: 20px;
-    border-radius: 12px;
-    min-height: 105px;
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    border: 2px solid transparent;
-    box-shadow: 0 4px 10px rgba(30, 60, 150, 0.12);
-    transition: 0.2s ease;
-}
-
-.unit-card h2,
-.unit-card h3,
-.unit-card p {
-    color: white;
-    margin-bottom: 5px;
-}
-
-.unit-card h3 {
-    font-size: 17px;
-}
-
-.unit-card p {
-    font-size: 13px;
-}
-
-.unit-card:hover {
-    transform: translateY(-3px);
-    border-color: #a5b4fc;
-    box-shadow: 0 7px 18px rgba(30, 60, 150, 0.2);
-}
-
-.unit-icon {
-    min-width: 48px;
-    height: 48px;
-    border-radius: 10px;
-    background: rgba(255,255,255,0.2);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 25px;
-}
-
-/* ==============================
-   YEAR / PDF CARDS
-============================== */
-
-.paper-unit-card {
-    background: white;
-    color: #172554;
-    border: 1px solid #dbe3f2;
-    min-height: 90px;
-    padding: 18px;
-}
-
-.paper-unit-card h2,
-.paper-unit-card h3,
-.paper-unit-card p {
-    color: #172554;
-}
-
-.paper-unit-card:hover {
-    background: #eff6ff;
-    border-color: #647bea;
-}
-
-.paper-view-link {
-    color: #2447b9;
-    font-size: 13px;
-    font-weight: bold;
-    margin-left: auto;
-}
-
-/* ==============================
-   QUESTIONS
-============================== */
-
-.question-card {
-    background: white;
-    padding: 22px;
-    margin: 15px 0;
-    border-radius: 12px;
-    border: 1px solid #dbe3f2;
-    box-shadow: 0 3px 12px rgba(30, 50, 100, 0.05);
-}
-
-.question-card h3 {
-    color: #173da8;
-    margin-bottom: 14px;
-}
-
-.question-card p {
-    color: #172554;
-    line-height: 1.7;
-    margin-bottom: 12px;
-}
-
-.question-card label {
-    display: block;
-    padding: 9px 12px;
-    margin: 7px 0;
-    background: #f8faff;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-}
-
-/* ==============================
-   BUTTONS
-============================== */
+/* ---------- 11. BUTTONS ---------- */
 
 button,
 .btn,
-a.button {
-    background: #2947c7;
-    color: white;
-    padding: 11px 19px;
+.button,
+.btn-primary,
+.primary-btn {
     border: none;
-    border-radius: 7px;
-    display: inline-block;
-    margin-top: 8px;
+    border-radius: 12px;
+
+    padding: 11px 20px;
+
+    background: var(--gradient-main);
+    color: #ffffff !important;
+
+    font-weight: 700;
+    font-size: 14px;
+
+    box-shadow: 0 7px 22px rgba(139, 69, 245, 0.22);
+
+    transition: 0.3s ease;
 }
 
 button:hover,
 .btn:hover,
-a.button:hover {
-    background: #172b83;
+.button:hover,
+.btn-primary:hover,
+.primary-btn:hover {
+    transform: translateY(-3px);
+    filter: brightness(1.12);
+    box-shadow: 0 10px 28px rgba(176, 68, 244, 0.35);
 }
 
-/* ==============================
-   FORMS
-============================== */
+.btn-secondary,
+.secondary-btn {
+    background: var(--surface-3) !important;
+    border: 1px solid var(--border);
+    color: var(--text) !important;
+}
+
+.btn-danger,
+.delete-btn {
+    background: linear-gradient(120deg, #F04478, #FF718A) !important;
+}
+
+.btn-success {
+    background: linear-gradient(120deg, #20C9A7, #25D9D0) !important;
+    color: #071B20 !important;
+}
+
+/* ---------- 12. FORMS ---------- */
+
+form {
+    color: var(--text);
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+
+    color: var(--text) !important;
+    font-weight: 600;
+    font-size: 14px;
+}
 
 input,
 select,
 textarea {
     width: 100%;
-    padding: 12px;
-    margin: 10px 0;
-    border: 1px solid #cbd5e1;
-    border-radius: 8px;
-    background: white;
+    padding: 13px 15px;
+
+    color: var(--text) !important;
+    background: #120D25 !important;
+
+    border: 1px solid rgba(185, 143, 255, 0.25) !important;
+    border-radius: 12px;
+
+    outline: none;
+    transition: 0.3s ease;
+}
+
+input::placeholder,
+textarea::placeholder {
+    color: var(--muted-2) !important;
 }
 
 input:focus,
 select:focus,
 textarea:focus {
-    outline: none;
-    border-color: #5268d8;
-    box-shadow: 0 0 0 3px #e0e7ff;
+    border-color: var(--purple) !important;
+    box-shadow: 0 0 0 3px rgba(139, 69, 245, 0.16);
 }
 
-label {
-    font-weight: bold;
-    color: #334155;
+select option {
+    background: #17102C;
+    color: var(--text);
 }
 
-/* ==============================
-   TABLES
-============================== */
+input[type="file"] {
+    padding: 12px;
+    border: 1px dashed var(--purple) !important;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+    width: auto;
+    accent-color: var(--purple);
+}
+
+/* ---------- 13. TABLES ---------- */
 
 table {
     width: 100%;
     border-collapse: collapse;
-    background: white;
-    border-radius: 10px;
     overflow: hidden;
+
+    background: var(--surface) !important;
+    color: var(--text) !important;
+
+    border-radius: 15px;
+}
+
+thead {
+    background: linear-gradient(
+        100deg,
+        rgba(49, 139, 255, 0.25),
+        rgba(139, 69, 245, 0.25)
+    ) !important;
 }
 
 th {
-    background: #1e369e;
-    color: white;
-    padding: 13px;
+    color: var(--cyan) !important;
+    font-weight: 700;
     text-align: left;
 }
 
-td {
-    padding: 12px;
-    border-bottom: 1px solid #e2e8f0;
+th, td {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
 }
 
-/* ==============================
-   EMPTY MESSAGE
-============================== */
+td {
+    color: var(--muted) !important;
+}
 
-.no-papers {
-    background: white;
-    border: 1px dashed #a5b4fc;
+tbody tr {
+    background: rgba(23, 16, 44, 0.85) !important;
+    transition: 0.2s ease;
+}
+
+tbody tr:hover {
+    background: rgba(139, 69, 245, 0.12) !important;
+}
+
+/* ---------- 14. QUESTION CARDS ---------- */
+
+.question-card {
+    padding: 23px;
+    margin-bottom: 20px;
+}
+
+.question-card p,
+.question-text {
+    color: var(--text) !important;
+    font-size: 15px;
+    line-height: 1.8;
+}
+
+.question-number {
+    display: inline-block;
+    padding: 6px 13px;
+    margin-bottom: 13px;
+
+    background: rgba(49, 139, 255, 0.16);
+    color: var(--cyan);
+
+    border-radius: 9px;
+    font-weight: 800;
+}
+
+.option,
+.question-option {
+    margin: 10px 0;
+    padding: 12px 15px;
+
+    background: rgba(44, 32, 80, 0.65);
+    border: 1px solid var(--border);
+    border-radius: 11px;
+
+    color: var(--muted);
+}
+
+.option:hover,
+.question-option:hover {
+    border-color: var(--purple);
+    color: var(--text);
+}
+
+/* ---------- 15. BADGES ---------- */
+
+.badge,
+.tag,
+.unit-badge,
+.status-badge {
+    display: inline-block;
+    padding: 5px 11px;
+
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.3px;
+
+    background: rgba(139, 69, 245, 0.18);
+    color: #D5B5FF;
+    border: 1px solid rgba(139, 69, 245, 0.3);
+}
+
+.badge-blue {
+    background: rgba(49, 139, 255, 0.15);
+    color: var(--cyan);
+}
+
+.badge-pink {
+    background: rgba(240, 68, 184, 0.15);
+    color: #FF9BDA;
+}
+
+.badge-green {
+    background: rgba(32, 201, 167, 0.15);
+    color: var(--teal);
+}
+
+/* ---------- 16. ALERTS / FLASH MESSAGES ---------- */
+
+.flash-message,
+.alert {
+    padding: 14px 18px;
+    margin-bottom: 20px;
+
     border-radius: 12px;
+
+    background: rgba(49, 139, 255, 0.12) !important;
+    color: var(--text) !important;
+
+    border: 1px solid rgba(49, 139, 255, 0.35);
+}
+
+.alert-success {
+    background: rgba(32, 201, 167, 0.12) !important;
+    border-color: var(--teal);
+}
+
+.alert-danger,
+.alert-error {
+    background: rgba(240, 68, 120, 0.12) !important;
+    border-color: var(--coral);
+}
+
+/* ---------- 17. UPLOAD AREA ---------- */
+
+.upload-box,
+.drop-zone,
+.file-upload-area {
     padding: 35px;
     text-align: center;
-    color: #475569;
+
+    background: rgba(33, 23, 61, 0.75) !important;
+
+    border: 2px dashed rgba(139, 69, 245, 0.55);
+    border-radius: 20px;
+
+    transition: 0.3s ease;
 }
 
-/* ==============================
-   RESPONSIVE DESIGN
-============================== */
+.upload-box:hover,
+.drop-zone:hover,
+.file-upload-area:hover {
+    border-color: var(--cyan);
+    background: rgba(49, 139, 255, 0.10) !important;
+}
+
+/* ---------- 18. EMPTY STATES ---------- */
+
+.empty-state {
+    text-align: center;
+    padding: 45px 20px;
+
+    background: rgba(33, 23, 61, 0.65);
+    border: 1px dashed var(--border);
+    border-radius: 18px;
+}
+
+.empty-state p {
+    color: var(--muted);
+}
+
+/* ---------- 19. FOOTER ---------- */
+
+.footer {
+    margin-top: 45px;
+    padding: 28px 15px;
+
+    text-align: center;
+
+    background: rgba(17, 10, 36, 0.95) !important;
+    border-top: 1px solid var(--border);
+
+    color: var(--muted) !important;
+    font-size: 13px;
+}
+
+.footer strong {
+    color: var(--cyan);
+    font-size: 15px;
+}
+
+/* ---------- 20. SCROLLBAR ---------- */
+
+::-webkit-scrollbar {
+    width: 9px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg);
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(
+        var(--blue),
+        var(--purple),
+        var(--pink)
+    );
+    border-radius: 20px;
+}
+
+/* ---------- 21. ANIMATIONS ---------- */
+
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(18px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes neonPulse {
+    0%, 100% {
+        box-shadow: 0 0 12px rgba(139, 69, 245, 0.12);
+    }
+
+    50% {
+        box-shadow: 0 0 25px rgba(240, 68, 184, 0.25);
+    }
+}
+
+.fade-up {
+    animation: fadeUp 0.6s ease both;
+}
+
+/* ---------- 22. RESPONSIVE DESIGN ---------- */
 
 @media (max-width: 900px) {
-    .dashboard-stats {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-@media (max-width: 600px) {
-    body {
-        padding: 0;
-    }
-
-    .container,
-    .dashboard-container {
-        padding: 10px;
-        margin: 10px auto;
-    }
-
-    .welcome-banner {
-        padding: 20px;
+    .navbar {
         flex-direction: column;
         align-items: flex-start;
     }
 
-    .welcome-banner h1 {
-        font-size: 21px;
+    .nav-links {
+        width: 100%;
+        gap: 5px;
     }
 
-    .dashboard-stats {
-        grid-template-columns: 1fr 1fr;
-        gap: 8px;
+    .nav-links a {
+        font-size: 12px;
+        padding: 8px 10px;
     }
 
-    .stat-card {
-        padding: 12px;
+    .main-container {
+        width: 94%;
+    }
+}
+
+@media (max-width: 600px) {
+    .navbar {
+        padding: 13px 4%;
     }
 
-    .unit-grid {
-        grid-template-columns: 1fr;
+    .brand {
+        font-size: 16px;
     }
 
-    .unit-card {
-        padding: 15px;
+    .brand-icon {
+        width: 40px;
+        height: 40px;
     }
 
-    .navbar,
-    nav {
-        padding: 12px;
+    .nav-links {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .nav-links a {
+        text-align: center;
+    }
+
+    .main-container {
+        padding-top: 22px;
+    }
+
+    .hero,
+    .welcome-banner,
+    .upload-hero,
+    .analysis-hero,
+    .unit-welcome {
+        padding: 23px;
+        border-radius: 19px;
+    }
+
+    .card,
+    .stat-card,
+    .question-card {
+        padding: 18px;
+    }
+
+    table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    button,
+    .btn {
+        max-width: 100%;
     }
 }

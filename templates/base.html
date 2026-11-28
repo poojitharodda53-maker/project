@@ -1,69 +1,129 @@
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}UGC NET CS | Paper 2{% endblock %}</title>
 
-    <title>UGC NET Computer Science</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet">
+
+    <!-- Main Galaxy Neon CSS -->
     <link rel="stylesheet"
-          href="{{ url_for('static', filename='style.css') }}">
+          href="{{ url_for('static', filename='style.css') }}?v=2">
+
+    <!-- Page Specific CSS -->
+    {% block extra_css %}{% endblock %}
 </head>
 
 <body>
 
-<nav>
+    <!-- ================= NAVBAR ================= -->
 
-    <a href="/" class="logo">
-        UGC NET <span>CS Paper 2</span>
-    </a>
+    <nav class="navbar">
 
-    <div class="nav-links">
+        <a href="{{ url_for('home') }}" class="brand">
 
-        <a href="/">Home</a>
+            <div class="brand-icon">🎓</div>
 
-        <a href="/upload">Upload PDF</a>
+            <div>
+                UGC NET CS
+                <small>PAPER 2 ANALYZER</small>
+            </div>
 
-        <a href="/papers">Papers</a>
+        </a>
 
-        <a href="/analysis">Analysis</a>
+        <div class="nav-links">
 
-    </div>
+            <a href="{{ url_for('home') }}">
+                ⌂ Home
+            </a>
 
-</nav>
+            <a href="{{ url_for('upload') }}" class="nav-upload">
+                ＋ Upload PDF
+            </a>
 
-<main>
+            <a href="{{ url_for('papers') }}">
+                ▤ Papers
+            </a>
 
-    {% with messages = get_flashed_messages() %}
+            <a href="{{ url_for('analysis') }}">
+                ◈ Analysis
+            </a>
 
-        {% if messages %}
+            <a href="{{ url_for('logout') }}">
+                ↪ Logout
+            </a>
 
-            {% for message in messages %}
+        </div>
 
-                <div class="alert">
-                    {{ message }}
-                </div>
+    </nav>
 
-            {% endfor %}
 
-        {% endif %}
+    <!-- ================= MAIN CONTENT ================= -->
 
-    {% endwith %}
+    <main class="main-container">
 
-    {% block content %}
+        <!-- Flash Messages -->
 
-    {% endblock %}
+        {% with messages = get_flashed_messages() %}
 
-</main>
+            {% if messages %}
 
-<footer>
+                {% for message in messages %}
 
-    UGC NET Computer Science and Applications
+                    <div class="flash-message">
+                        {{ message }}
+                    </div>
 
-</footer>
+                {% endfor %}
+
+            {% endif %}
+
+        {% endwith %}
+
+
+        <!-- Individual Page Content -->
+
+        {% block content %}{% endblock %}
+
+    </main>
+
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer class="footer">
+
+        <strong>
+            UGC NET Computer Science – Paper 2
+        </strong>
+
+        <br>
+
+        Smart Question Classification & Learning Portal
+
+        <br>
+
+        Designed for Students
+
+        <br><br>
+
+        <span>
+            © 2026 UGC NET CS Analyzer
+        </span>
+
+    </footer>
+
+
+    <!-- ================= PAGE JAVASCRIPT ================= -->
+
+    {% block extra_js %}{% endblock %}
 
 </body>
 </html>

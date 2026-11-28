@@ -4,159 +4,584 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - UGC NET Analyzer</title>
 
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='style.css') }}">
+    <title>Login | UGC NET CS Analyzer</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
-        .login-container {
-            max-width: 430px;
-            margin: 60px auto;
-            padding: 30px;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 5px 25px rgba(0,0,0,0.10);
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        .login-container h1,
-        .login-container h2,
-        .login-container p {
-            text-align: center;
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 25px;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #EEF2FF, #F5F3FF, #E0F2FE);
+        }
+
+        .login-wrapper {
+            width: 100%;
+            max-width: 1050px;
+            min-height: 620px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            background: white;
+            border-radius: 28px;
+            overflow: hidden;
+            box-shadow: 0 20px 65px rgba(23, 37, 84, .13);
+        }
+
+        /* LEFT PANEL */
+
+        .login-welcome {
+            position: relative;
+            overflow: hidden;
+            padding: 55px 45px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background: linear-gradient(145deg, #172554, #2563EB 55%, #7657E8);
+            color: white;
+        }
+
+        .login-welcome::before {
+            content: "";
+            position: absolute;
+            width: 280px;
+            height: 280px;
+            border: 1px solid rgba(255,255,255,.15);
+            border-radius: 50%;
+            right: -100px;
+            top: 70px;
+        }
+
+        .login-welcome::after {
+            content: "";
+            position: absolute;
+            width: 220px;
+            height: 220px;
+            border: 1px solid rgba(255,255,255,.12);
+            border-radius: 50%;
+            left: -100px;
+            bottom: -70px;
+        }
+
+        .brand {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-icon {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,.17);
+            border: 1px solid rgba(255,255,255,.25);
+            border-radius: 14px;
+            font-size: 25px;
+        }
+
+        .brand-name {
+            font-family: 'Outfit', sans-serif;
+            font-size: 19px;
+            font-weight: 800;
+            line-height: 1.3;
+        }
+
+        .welcome-content {
+            position: relative;
+            z-index: 1;
+            margin: 50px 0;
+        }
+
+        .welcome-tag {
+            display: inline-block;
+            padding: 8px 13px;
+            background: rgba(255,255,255,.15);
+            border: 1px solid rgba(255,255,255,.2);
+            border-radius: 30px;
+            font-size: 11px;
+            letter-spacing: 1.5px;
+            font-weight: 800;
+            margin-bottom: 22px;
+        }
+
+        .welcome-content h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: clamp(32px, 4vw, 43px);
+            line-height: 1.15;
+            font-weight: 800;
+            margin-bottom: 18px;
+            color: white;
+        }
+
+        .welcome-content p {
+            color: #DBEAFE;
+            font-size: 14px;
+            line-height: 1.9;
+            max-width: 370px;
+        }
+
+        .welcome-features {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            gap: 14px;
+        }
+
+        .welcome-feature {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #F1F5F9;
+            font-size: 13px;
+        }
+
+        .feature-icon {
+            width: 34px;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,.15);
+            border-radius: 10px;
+        }
+
+        .welcome-footer {
+            position: relative;
+            z-index: 1;
+            color: #BFDBFE;
+            font-size: 11px;
+            margin-top: 35px;
+        }
+
+        /* RIGHT PANEL */
+
+        .login-form-panel {
+            padding: 55px 48px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .form-heading {
+            margin-bottom: 28px;
+        }
+
+        .form-heading .small-title {
+            color: #7657E8;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .form-heading h2 {
+            color: #172554;
+            font-family: 'Outfit', sans-serif;
+            font-size: 31px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .form-heading p {
+            color: #64748B;
+            font-size: 13px;
+        }
+
+        /* ROLE SELECTION */
+
+        .role-label {
+            color: #334155;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 11px;
         }
 
         .role-tabs {
             display: flex;
             gap: 10px;
-            margin: 25px 0;
+            margin-bottom: 25px;
         }
 
         .role-tabs button {
             flex: 1;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            background: #f3f4f6;
-            color: #333;
+            padding: 13px 8px;
+            border: 1px solid #E2E8F0;
+            border-radius: 11px;
+            background: #F8FAFC;
+            color: #64748B;
+            font-size: 13px;
+            font-weight: 700;
             cursor: pointer;
-            font-weight: bold;
+            transition: .2s;
         }
 
         .role-tabs button.active {
-            background: #3155c8;
-            color: white;
-            border-color: #3155c8;
+            background: #EEF2FF;
+            color: #3730A3;
+            border-color: #818CF8;
+            box-shadow: 0 0 0 2px rgba(99,102,241,.07);
         }
 
-        .login-container label {
+        /* FLASH MESSAGE */
+
+        .message {
+            padding: 12px 14px;
+            margin-bottom: 15px;
+            background: #FFF1F2;
+            color: #BE123C;
+            border: 1px solid #FECDD3;
+            border-radius: 10px;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        /* INPUT FIELDS */
+
+        .form-group {
+            margin-bottom: 19px;
+        }
+
+        .form-group label {
             display: block;
-            margin-top: 15px;
-            font-weight: 600;
+            color: #334155;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 9px;
         }
 
-        .login-container input {
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px;
+        }
+
+        .form-group input {
             width: 100%;
-            padding: 12px;
-            margin-top: 7px;
-            box-sizing: border-box;
-            border: 1px solid #ccc;
-            border-radius: 7px;
+            padding: 14px 14px 14px 43px;
+            border: 1px solid #CBD5E1;
+            border-radius: 11px;
+            background: #F8FAFC;
+            color: #1E293B;
+            font-size: 13px;
+            outline: none;
+            transition: .2s;
+        }
+
+        .form-group input:focus {
+            border-color: #2563EB;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(37,99,235,.09);
         }
 
         .login-btn {
             width: 100%;
-            padding: 13px;
-            margin-top: 25px;
-            background: #3155c8;
-            color: white;
+            padding: 15px;
+            margin-top: 7px;
             border: none;
-            border-radius: 8px;
-            font-size: 16px;
+            border-radius: 12px;
+            background: linear-gradient(100deg, #2563EB, #7657E8);
+            color: white;
+            font-size: 15px;
+            font-weight: 800;
             cursor: pointer;
+            transition: .2s;
+            box-shadow: 0 7px 17px rgba(37,99,235,.19);
         }
 
         .login-btn:hover {
-            background: #243fa0;
-        }
-
-        .message {
-            text-align: center;
-            color: #c0392b;
+            transform: translateY(-2px);
+            box-shadow: 0 11px 23px rgba(37,99,235,.25);
         }
 
         .register-link {
             text-align: center;
-            margin-top: 20px;
+            margin-top: 25px;
+            color: #64748B;
+            font-size: 13px;
+        }
+
+        .register-link a {
+            display: inline-block;
+            margin-top: 7px;
+            color: #2563EB;
+            font-weight: 800;
+            text-decoration: none;
+        }
+
+        .register-link a:hover {
+            color: #7657E8;
+            text-decoration: underline;
+        }
+
+        .form-bottom {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #E5E7EB;
+            text-align: center;
+            color: #94A3B8;
+            font-size: 11px;
+        }
+
+        @media (max-width: 800px) {
+            .login-wrapper {
+                max-width: 520px;
+                grid-template-columns: 1fr;
+            }
+
+            .login-welcome {
+                padding: 35px 30px;
+            }
+
+            .welcome-content {
+                margin: 35px 0;
+            }
+
+            .welcome-content h1 {
+                font-size: 32px;
+            }
+
+            .login-form-panel {
+                padding: 38px 30px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 12px;
+            }
+
+            .login-wrapper {
+                border-radius: 19px;
+            }
+
+            .login-welcome,
+            .login-form-panel {
+                padding: 28px 22px;
+            }
+
+            .role-tabs button {
+                font-size: 12px;
+            }
         }
     </style>
 </head>
 
 <body>
 
-<div class="login-container">
+<div class="login-wrapper">
 
-    <h1>UGC NET Computer Science</h1>
-    <h2>Question Paper Analyzer</h2>
+    <!-- LEFT WELCOME SECTION -->
 
-    <h2>Welcome Back!</h2>
-    <p>Select your login type</p>
+    <section class="login-welcome">
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% for category, message in messages %}
-            <p class="message">{{ message }}</p>
-        {% endfor %}
-    {% endwith %}
+        <div class="brand">
+            <div class="brand-icon">🎓</div>
 
-    <div class="role-tabs">
-        <button type="button"
-                id="adminTab"
-                onclick="selectRole('admin')">
-            Admin Login
-        </button>
+            <div class="brand-name">
+                UGC NET CS
+                <br>
+                <span style="font-size:12px;font-weight:500;">
+                    Paper 2 Analyzer
+                </span>
+            </div>
+        </div>
 
-        <button type="button"
-                id="studentTab"
-                class="active"
-                onclick="selectRole('student')">
-            Student Login
-        </button>
-    </div>
+        <div class="welcome-content">
 
-    <form action="{{ url_for('login') }}" method="POST">
+            <div class="welcome-tag">
+                SMART LEARNING PLATFORM
+            </div>
 
-        <input type="hidden"
-               name="role"
-               id="selectedRole"
-               value="student">
+            <h1>
+                Your Preparation.
+                <br>
+                Your Progress.
+                <br>
+                Your Success.
+            </h1>
 
-        <label>Username</label>
-        <input type="text"
-               name="username"
-               placeholder="Enter username"
-               required>
+            <p>
+                Explore previous-year UGC NET Computer Science
+                question papers, organized into ten syllabus units
+                for a better learning experience.
+            </p>
 
-        <label>Password</label>
-        <input type="password"
-               name="password"
-               placeholder="Enter password"
-               required>
+        </div>
 
-        <button type="submit" class="login-btn">
-            Login
-        </button>
+        <div class="welcome-features">
 
-    </form>
+            <div class="welcome-feature">
+                <span class="feature-icon">📚</span>
+                <span>10 Computer Science Syllabus Units</span>
+            </div>
 
-    <div class="register-link">
-        <p>New Student?</p>
-        <a href="{{ url_for('register') }}">
-            Create Student Account
-        </a>
-    </div>
+            <div class="welcome-feature">
+                <span class="feature-icon">📄</span>
+                <span>Organized Previous-Year Question Papers</span>
+            </div>
 
-    <p>UGC NET Computer Science - Paper 2</p>
+            <div class="welcome-feature">
+                <span class="feature-icon">💡</span>
+                <span>Questions with Options and Available Answers</span>
+            </div>
+
+        </div>
+
+        <div class="welcome-footer">
+            UGC NET COMPUTER SCIENCE · PAPER 2
+        </div>
+
+    </section>
+
+
+    <!-- RIGHT LOGIN SECTION -->
+
+    <section class="login-form-panel">
+
+        <div class="form-heading">
+
+            <div class="small-title">Welcome Back</div>
+
+            <h2>Sign In</h2>
+
+            <p>Select your account type and enter your credentials.</p>
+
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+
+            {% for category, message in messages %}
+
+                <div class="message">
+                    {{ message }}
+                </div>
+
+            {% endfor %}
+
+        {% endwith %}
+
+
+        <div class="role-label">Choose Login Type</div>
+
+        <div class="role-tabs">
+
+            <button type="button"
+                    id="adminTab"
+                    onclick="selectRole('admin')">
+
+                🛡️ Admin Login
+
+            </button>
+
+            <button type="button"
+                    id="studentTab"
+                    class="active"
+                    onclick="selectRole('student')">
+
+                🎓 Student Login
+
+            </button>
+
+        </div>
+
+
+        <form action="{{ url_for('login') }}" method="POST">
+
+            <input type="hidden"
+                   name="role"
+                   id="selectedRole"
+                   value="student">
+
+
+            <div class="form-group">
+
+                <label for="username">Username</label>
+
+                <div class="input-wrapper">
+
+                    <span class="input-icon">👤</span>
+
+                    <input type="text"
+                           id="username"
+                           name="username"
+                           placeholder="Enter your username"
+                           autocomplete="username"
+                           required>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="password">Password</label>
+
+                <div class="input-wrapper">
+
+                    <span class="input-icon">🔒</span>
+
+                    <input type="password"
+                           id="password"
+                           name="password"
+                           placeholder="Enter your password"
+                           autocomplete="current-password"
+                           required>
+
+                </div>
+
+            </div>
+
+
+            <button type="submit" class="login-btn">
+                Sign In →
+            </button>
+
+        </form>
+
+
+        <div class="register-link">
+
+            <p>New Student?</p>
+
+            <a href="{{ url_for('register') }}">
+                Create Student Account →
+            </a>
+
+        </div>
+
+
+        <div class="form-bottom">
+            UGC NET Computer Science · Paper 2
+        </div>
+
+    </section>
 
 </div>
+
 
 <script>
 function selectRole(role) {

@@ -1,87 +1,236 @@
 
 {% extends "base.html" %}
 
+{% block title %}Unit Questions | UGC NET CS{% endblock %}
+
+{% block extra_css %}
+<style>
+
+.unit-page {
+    max-width: 1100px;
+    margin: auto;
+}
+
+.unit-hero {
+    padding: 32px;
+    border-radius: 23px;
+    margin-bottom: 28px;
+    background:
+        linear-gradient(120deg,
+            rgba(49,139,255,.22),
+            rgba(139,69,245,.25),
+            rgba(240,68,184,.16)),
+        #17102C !important;
+    border: 1px solid rgba(176,68,244,.35);
+}
+
+.unit-hero h1 {
+    font-size: 30px;
+    margin-bottom: 10px;
+}
+
+.unit-hero p {
+    color: #B8AFCF;
+    line-height: 1.7;
+}
+
+.unit-label {
+    display: inline-block;
+    padding: 7px 13px;
+    margin-bottom: 15px;
+    border-radius: 20px;
+    background: rgba(37,217,208,.12);
+    color: #25D9D0;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.unit-section-title {
+    margin: 28px 0 18px;
+    font-size: 23px;
+}
+
+.paper-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.paper-card {
+    padding: 23px;
+    border-radius: 18px;
+    background: linear-gradient(145deg,#21173D,#17102C) !important;
+    border: 1px solid rgba(185,143,255,.22);
+    transition: .3s ease;
+}
+
+.paper-card:hover {
+    transform: translateY(-4px);
+    border-color: #8B45F5;
+    box-shadow: 0 10px 25px rgba(139,69,245,.16);
+}
+
+.paper-icon {
+    font-size: 30px;
+    margin-bottom: 14px;
+}
+
+.paper-card h3 {
+    font-size: 19px;
+    margin-bottom: 9px;
+    color: #F7F1FF;
+}
+
+.paper-card p {
+    color: #B8AFCF;
+    font-size: 13px;
+    margin-bottom: 18px;
+}
+
+.paper-link {
+    display: inline-block;
+    padding: 10px 17px;
+    border-radius: 10px;
+    text-decoration: none;
+    color: white;
+    font-size: 13px;
+    font-weight: 800;
+    background: linear-gradient(110deg,#318BFF,#8B45F5,#F044B8);
+}
+
+.paper-link:hover {
+    box-shadow: 0 5px 18px rgba(139,69,245,.3);
+}
+
+.empty-state {
+    padding: 40px 20px;
+    text-align: center;
+    border-radius: 18px;
+    background: #17102C !important;
+    border: 1px dashed rgba(185,143,255,.3);
+}
+
+.empty-state .icon {
+    font-size: 42px;
+    margin-bottom: 12px;
+}
+
+.empty-state p {
+    color: #B8AFCF;
+    margin-top: 9px;
+}
+
+.back-area {
+    margin-top: 28px;
+}
+
+@media(max-width:650px) {
+    .paper-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .unit-hero {
+        padding: 23px;
+    }
+
+    .unit-hero h1 {
+        font-size: 25px;
+    }
+}
+
+</style>
+{% endblock %}
+
+
 {% block content %}
 
-<div class="dashboard-container unit-page">
+<div class="unit-page">
 
-    <section class="welcome-banner unit-welcome">
-        <div class="unit-welcome-icon">📚</div>
+    <section class="unit-hero">
 
-        <div class="welcome-content">
-            <p class="welcome-label">UGC NET COMPUTER SCIENCE</p>
-            <h1>Unit {{ unit_no }} - {{ unit.name }}</h1>
-            <p>Explore previous year question papers belonging to this unit.</p>
-        </div>
-    </section>
+        <span class="unit-label">
+            UGC NET COMPUTER SCIENCE
+        </span>
 
-    <section class="dashboard-stats">
+        <h1>
+            <span class="gradient-text">
+                📚 {{ unit_name }}
+            </span>
+        </h1>
 
-        <div class="stat-card stat-blue">
-            <div class="stat-icon">▤</div>
-            <div>
-                <p>Total Questions</p>
-                <h2>{{ total }}</h2>
-            </div>
-        </div>
-
-        <div class="stat-card stat-purple">
-            <div class="stat-icon">▣</div>
-            <div>
-                <p>Available Papers</p>
-                <h2>{{ papers|length }}</h2>
-            </div>
-        </div>
+        <p>
+            Explore uploaded previous-year question papers
+            and practice questions from this syllabus unit.
+        </p>
 
     </section>
 
-    <section class="syllabus-section">
 
-        <div class="section-heading">
-            <div>
-                <p class="section-label">QUESTION PAPER COLLECTION</p>
-                <h2>Available Years</h2>
-                <p>Select a year to view its questions.</p>
-            </div>
-        </div>
+    <h2 class="unit-section-title">
+        <span class="gradient-text">
+            📂 Available Question Papers
+        </span>
+    </h2>
 
-        {% if papers %}
 
-        <div class="unit-grid">
+    {% if papers %}
+
+        <div class="paper-grid">
 
             {% for paper in papers %}
 
-            <a href="{{ url_for('unit_paper_questions', unit_no=unit_no, paper_id=paper.id) }}"
-               class="unit-card paper-unit-card">
+                <article class="paper-card">
 
-                <div class="unit-icon">📅</div>
+                    <div class="paper-icon">📄</div>
 
-                <h3>{{ paper.exam_year or 'Year Not Available' }}</h3>
+                    <h3>
+                        {{ unit_name }} – {{ paper.exam_year }}
+                    </h3>
 
-                <h2>{{ unit.name }}</h2>
+                    <p>
+                        {{ paper.exam_session }}
+                    </p>
 
-                <p>{{ paper.total }} Questions</p>
+                    <a href="{{ url_for('paper_detail', paper_id=paper.id) }}"
+                       class="paper-link">
 
-                <span class="paper-view-link">
-                    View Questions →
-                </span>
+                        View Questions →
 
-            </a>
+                    </a>
+
+                </article>
 
             {% endfor %}
 
         </div>
 
-        {% else %}
+    {% else %}
 
-        <div class="no-papers">
-            <h2>No Papers Available</h2>
-            <p>Upload question papers to view them here.</p>
+        <div class="empty-state">
+
+            <div class="icon">📭</div>
+
+            <h3>No Papers Available</h3>
+
+            <p>
+                No question papers are currently available for this unit.
+            </p>
+
         </div>
 
-        {% endif %}
+    {% endif %}
 
-    </section>
+
+    <div class="back-area">
+
+        <a href="{{ url_for('dashboard') }}"
+           class="btn btn-secondary">
+
+            ← Back to Dashboard
+
+        </a>
+
+    </div>
 
 </div>
 

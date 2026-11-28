@@ -1,31 +1,493 @@
+
 {% extends "base.html" %}
 
+{% block title %}Upload PDF | UGC NET CS{% endblock %}
+
+{% block extra_css %}
+<style>
+
+/* ================= UPLOAD PAGE ================= */
+
+.upload-page {
+    max-width: 1000px;
+    margin: auto;
+}
+
+/* Hero */
+
+.upload-hero {
+    padding: 35px;
+    border-radius: 25px;
+    margin-bottom: 30px;
+
+    background:
+        linear-gradient(
+            120deg,
+            rgba(49,139,255,0.23),
+            rgba(139,69,245,0.25),
+            rgba(240,68,184,0.17)
+        ),
+        #17102C !important;
+
+    border: 1px solid rgba(176,68,244,0.35);
+}
+
+.upload-hero h1 {
+    font-size: clamp(28px, 4vw, 38px);
+    margin-bottom: 12px;
+}
+
+.upload-hero p {
+    color: #B8AFCF;
+    max-width: 650px;
+}
+
+.upload-hero-icon {
+    font-size: 42px;
+    margin-bottom: 12px;
+}
+
+/* Main Upload Card */
+
+.upload-card {
+    padding: 32px;
+    border-radius: 23px;
+
+    background: linear-gradient(
+        145deg,
+        #21173D,
+        #17102C
+    ) !important;
+
+    border: 1px solid rgba(185,143,255,0.22);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+}
+
+.upload-card h2 {
+    margin-bottom: 8px;
+}
+
+.upload-description {
+    color: #B8AFCF;
+    font-size: 14px;
+    margin-bottom: 25px;
+}
+
+/* Form */
+
+.upload-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+}
+
+.form-group label {
+    color: #F7F1FF;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 14px 16px;
+
+    color: #F7F1FF !important;
+    background: #120D25 !important;
+
+    border: 1px solid rgba(185,143,255,0.25);
+    border-radius: 12px;
+
+    outline: none;
+}
+
+.form-group input:focus {
+    border-color: #8B45F5;
+    box-shadow: 0 0 0 3px rgba(139,69,245,0.15);
+}
+
+/* File Upload */
+
+.file-upload-area {
+    padding: 30px 20px;
+    text-align: center;
+
+    background: rgba(49,139,255,0.07) !important;
+
+    border: 2px dashed rgba(139,69,245,0.55);
+    border-radius: 18px;
+}
+
+.file-upload-icon {
+    font-size: 42px;
+    margin-bottom: 12px;
+}
+
+.file-upload-area h3 {
+    font-size: 17px;
+    margin-bottom: 8px;
+}
+
+.file-upload-area p {
+    font-size: 13px;
+    color: #B8AFCF;
+    margin-bottom: 15px;
+}
+
+.file-upload-area input[type="file"] {
+    display: block;
+    width: 100%;
+    max-width: 400px;
+    margin: auto;
+    padding: 12px;
+
+    background: #17102C !important;
+    border: 1px dashed #8B45F5 !important;
+    border-radius: 12px;
+    color: #F7F1FF !important;
+}
+
+/* Submit Button */
+
+.upload-submit {
+    width: 100%;
+    padding: 15px;
+    margin-top: 5px;
+
+    background: linear-gradient(
+        110deg,
+        #318BFF,
+        #8B45F5,
+        #F044B8
+    );
+
+    color: white;
+    border: none;
+    border-radius: 13px;
+
+    font-size: 15px;
+    font-weight: 800;
+
+    box-shadow: 0 8px 25px rgba(139,69,245,0.25);
+    transition: 0.3s ease;
+}
+
+.upload-submit:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(176,68,244,0.35);
+}
+
+/* Guide Section */
+
+.upload-guide {
+    margin-top: 28px;
+    padding: 27px;
+
+    border-radius: 20px;
+
+    background: #17102C !important;
+    border: 1px solid rgba(37,217,208,0.25);
+}
+
+.upload-guide h2 {
+    margin-bottom: 20px;
+}
+
+.guide-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+
+    margin-bottom: 17px;
+}
+
+.guide-number {
+    min-width: 35px;
+    height: 35px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 11px;
+
+    background: linear-gradient(
+        135deg,
+        #318BFF,
+        #8B45F5
+    );
+
+    color: white;
+    font-weight: 800;
+}
+
+.guide-step h3 {
+    font-size: 15px;
+    margin-bottom: 4px;
+}
+
+.guide-step p {
+    font-size: 13px;
+    color: #B8AFCF;
+}
+
+/* Note */
+
+.upload-note {
+    margin-top: 20px;
+    padding: 16px;
+
+    background: rgba(247,198,106,0.08);
+    border: 1px solid rgba(247,198,106,0.3);
+    border-radius: 12px;
+
+    color: #F7C66A;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+/* Responsive */
+
+@media (max-width: 600px) {
+
+    .upload-hero {
+        padding: 24px;
+    }
+
+    .upload-card {
+        padding: 20px;
+    }
+
+    .upload-guide {
+        padding: 20px;
+    }
+
+    .file-upload-area {
+        padding: 22px 12px;
+    }
+
+}
+
+</style>
+{% endblock %}
+
+
 {% block content %}
-<div class="container">
-    <h1>Upload Question Paper</h1>
-    <p>Upload your UGC NET Computer Science previous-year question paper PDF.</p>
 
-    <form action="{{ url_for('upload') }}" method="POST" enctype="multipart/form-data">
+<div class="upload-page">
 
-        <label for="year">Select Exam Year:</label>
-        <input type="number" id="year" name="year"
-               placeholder="Example: 2025" required>
+    <!-- HERO SECTION -->
 
-        <br><br>
+    <section class="upload-hero">
 
-        <label for="exam_name">Exam Name:</label>
-        <input type="text" id="exam_name" name="exam_name"
-               placeholder="Example: June 2025" required>
+        <div class="upload-hero-icon">
+            📤
+        </div>
 
-        <br><br>
+        <h1>
+            <span class="gradient-text">
+                Upload Question Paper
+            </span>
+        </h1>
 
-        <label for="pdf_file">Choose PDF File:</label>
-        <input type="file" id="pdf_file" name="pdf_file"
-               accept=".pdf" required>
+        <p>
+            Upload UGC NET Computer Science Paper 2 PDFs.
+            Our system extracts questions and classifies them
+            into the appropriate syllabus units.
+        </p>
 
-        <br><br>
+    </section>
 
-        <button type="submit">Upload PDF</button>
-    </form>
+
+    <!-- UPLOAD FORM -->
+
+    <section class="upload-card">
+
+        <h2>📄 PDF Upload</h2>
+
+        <p class="upload-description">
+            Enter the examination details and select your PDF file.
+        </p>
+
+
+        <form method="POST"
+              action="{{ url_for('upload') }}"
+              enctype="multipart/form-data"
+              class="upload-form">
+
+
+            <!-- EXAM YEAR -->
+
+            <div class="form-group">
+
+                <label for="year">
+                    📅 Examination Year
+                </label>
+
+                <input
+                    type="number"
+                    id="year"
+                    name="year"
+                    placeholder="Example: 2025"
+                    min="2000"
+                    max="2100"
+                    required
+                >
+
+            </div>
+
+
+            <!-- EXAM NAME -->
+
+            <div class="form-group">
+
+                <label for="exam_name">
+                    📝 Examination Name
+                </label>
+
+                <input
+                    type="text"
+                    id="exam_name"
+                    name="exam_name"
+                    placeholder="Example: UGC NET June 2025"
+                    required
+                >
+
+            </div>
+
+
+            <!-- PDF FILE -->
+
+            <div class="form-group">
+
+                <label>
+                    📁 Select Question Paper PDF
+                </label>
+
+                <div class="file-upload-area">
+
+                    <div class="file-upload-icon">
+                        📚
+                    </div>
+
+                    <h3>
+                        Choose Your PDF File
+                    </h3>
+
+                    <p>
+                        Select a UGC NET Computer Science
+                        Paper 2 PDF document.
+                    </p>
+
+                    <input
+                        type="file"
+                        name="pdf_file"
+                        accept=".pdf,application/pdf"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+
+            <!-- SUBMIT -->
+
+            <button type="submit" class="upload-submit">
+                ⬆ Upload and Analyze PDF
+            </button>
+
+        </form>
+
+    </section>
+
+
+    <!-- UPLOAD GUIDE -->
+
+    <section class="upload-guide">
+
+        <h2>
+            <span class="gradient-text">
+                📘 Upload Guide
+            </span>
+        </h2>
+
+
+        <div class="guide-step">
+
+            <div class="guide-number">1</div>
+
+            <div>
+                <h3>Enter Examination Year</h3>
+
+                <p>
+                    Enter the year of the UGC NET examination.
+                </p>
+            </div>
+
+        </div>
+
+
+        <div class="guide-step">
+
+            <div class="guide-number">2</div>
+
+            <div>
+                <h3>Enter Examination Name</h3>
+
+                <p>
+                    Provide the examination session or name.
+                </p>
+            </div>
+
+        </div>
+
+
+        <div class="guide-step">
+
+            <div class="guide-number">3</div>
+
+            <div>
+                <h3>Select PDF Document</h3>
+
+                <p>
+                    Choose the Computer Science Paper 2 PDF file.
+                </p>
+            </div>
+
+        </div>
+
+
+        <div class="guide-step">
+
+            <div class="guide-number">4</div>
+
+            <div>
+                <h3>Upload and Analyze</h3>
+
+                <p>
+                    Submit the form to extract and classify questions.
+                </p>
+            </div>
+
+        </div>
+
+
+        <div class="upload-note">
+
+            💡 <strong>Note:</strong>
+            Upload a readable PDF document.
+            The system extracts available questions and
+            classifies them into the ten syllabus units.
+
+        </div>
+
+    </section>
+
 </div>
+
 {% endblock %}
